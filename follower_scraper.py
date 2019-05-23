@@ -9,6 +9,12 @@ import pandas as pd
 import json
 import time
 
+### Mate's changes ###
+from tweetcrawler import db
+from tweetcrawler.model import Users
+###
+
+
 # # # # TWITTER AUTHENTICATOR # # # #
 
 
@@ -69,10 +75,11 @@ if __name__ == '__main__':
     api = twitter_client.get_twitter_client_api()
 
     # obtain id's of user's followers. API call will return 5000 ids
-    f_ids = api.followers_ids(screen_name='BarackObama')
-    # # print(f_ids[:50]) #order of ids returned by API call has minor variations
-    # # print(len(f_ids)) #5000
-    
+
+    f_ids = api.followers_ids(screen_name='KatyPerry')
+    # print(f_ids[:50]) #order of ids returned by API call has minor variations
+    # print(len(f_ids)) #5000
+    user_count = 0
     legit_followers = []
     n = 1  # counter for simple progress bar
     for i in range(len(f_ids)-1):
@@ -85,9 +92,38 @@ if __name__ == '__main__':
         try:
             # obtain follower object from API
             follower = api.get_user(f_ids[i])
+            
+            
             # check if follower has minimum followers count
-            if follower.followers_count > 10000:
+            if follower.followers_count > 10:
                 legit_followers.append(follower)
+
+                      
+                ### SAVE TO DATABASE ###
+
+                # check if the record exists in db
+                if bool(Users.query.filter_by(id=follower.id).first()):
+                    print(f'User {follower.name} is already in the database')
+                    pass
+                else:
+                    user_count += 1
+                    save = Users(id=follower.id ,screen_name=follower.screen_name ,
+                                full_name=follower.name, location=follower.location,
+                                followers_count=follower.followers_count,
+                                friends_count=follower.friends_count,
+                                profile_created_at = follower.created_at,
+                                protected=follower.protected)
+                    db.session.add(save)
+                    db.session.commit()
+                    
+                    print(f'{follower.name} added to database.')
+                    print(f'{user_count} users matching the filters saved into database')
+                
+
+
+
+         
+
         #do nothing/move on to next iteration if API call returns an exception/error
         except tweepy.TweepError:
             pass
