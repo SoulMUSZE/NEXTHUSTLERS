@@ -54,6 +54,17 @@ class UserAnalyzer():
 
         return df
 
+class TweetAnalyzer():
+    '''
+    Functionality for analyzing and categorizing content from tweets.
+    '''
+    def tweets_to_data_frame(self, tweets):
+        df = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=['Tweets'])
+        df['id'] = np.array([tweet.id for tweet in tweets])
+        df['hashtags'] = np.array([tweet.entities['hashtags'][0]['text'] if tweet.entities['hashtags'] else None for tweet in tweets])
+
+        return df
+
 
 if __name__ == '__main__':
     # initialize class objects
@@ -64,6 +75,7 @@ if __name__ == '__main__':
     api = twitter_client.get_twitter_client_api()
 
     # obtain id's of user's followers. API call will return 5000 ids
+
     f_ids = api.followers_ids(screen_name='KatyPerry')
     # print(f_ids[:50]) #order of ids returned by API call has minor variations
     # print(len(f_ids)) #5000
