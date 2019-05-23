@@ -85,7 +85,6 @@ if __name__ == '__main__':
         try:
             # obtain follower object from API
             follower = api.get_user(f_ids[i])
-            print(follower)
             # check if follower has minimum followers count
             if follower.followers_count > 10000:
                 legit_followers.append(follower)
