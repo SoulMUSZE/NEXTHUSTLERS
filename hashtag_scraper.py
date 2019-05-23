@@ -39,7 +39,7 @@ class TweetAnalyzer():
     def tweets_to_data_frame(self, tweets):
         df = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=['Tweets'])
         df['id'] = np.array([tweet.id for tweet in tweets])
-        df['hashtags'] = np.array([tweet.entities['hashtags'][0]['text'] if tweet.entities['hashtags'] else None for tweet in tweets])
+        df['hashtags'] = np.array([tweet.entities['hashtags'][0]['text'] if tweet.entities['hashtags'] else '-' for tweet in tweets])
 
         return df
 
@@ -52,9 +52,22 @@ if __name__ == '__main__':
     # create API object with authentication
     api = twitter_client.get_twitter_client_api()
 
-    tweets = api.user_timeline(screen_name='Neelofa')
-    print(tweets)
+    #specify the number of pages of user_timeline to scrape for tweets 
+    num_pages = 20
+    user = 'Neelofa'
+
+    tweets_list = []
+    for i in range(1, num_pages + 1):
+        timeline_tweets = api.user_timeline(screen_name = user, page = i)
+        tweets_list.append(timeline_tweets)
+
+    #flatten the list of lists
+    tweets = [val for sublist in tweets_list for val in sublist]
+    # print(len(tweets))
 
     tweet_df = tweet_analyzer.tweets_to_data_frame(tweets)
-    print(tweet_df)
-    print(dir(tweets[0]))
+    
+    hashtag_list = tweet_df.hashtags.unique().tolist()
+    hashtag_list.remove('-')
+    print(hashtag_list)
+    # print(dir(tweets[0]))
