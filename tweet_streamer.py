@@ -1,4 +1,7 @@
-# import os
+'''
+WARNING: THIS SCRIPT IS DEPRECATED. USE 'FOLLOWER_SCRAPER.PY' INSTEAD
+'''
+
 from flask import jsonify
 from tweepy import API
 from tweepy import Cursor
