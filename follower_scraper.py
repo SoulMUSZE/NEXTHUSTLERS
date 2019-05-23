@@ -48,6 +48,17 @@ class UserAnalyzer():
 
         return df
 
+class TweetAnalyzer():
+    '''
+    Functionality for analyzing and categorizing content from tweets.
+    '''
+    def tweets_to_data_frame(self, tweets):
+        df = pd.DataFrame(data=[tweet.text for tweet in tweets], columns=['Tweets'])
+        df['id'] = np.array([tweet.id for tweet in tweets])
+        df['hashtags'] = np.array([tweet.entities['hashtags'][0]['text'] if tweet.entities['hashtags'] else None for tweet in tweets])
+
+        return df
+
 
 if __name__ == '__main__':
     # initialize class objects
@@ -57,34 +68,43 @@ if __name__ == '__main__':
     # create API object with authentication
     api = twitter_client.get_twitter_client_api()
 
-    # obtain id's of user's followers. API call will return 5000 ids
-    f_ids = api.followers_ids(screen_name='BarackObama')
-    # print(f_ids[:50]) #order of ids returned by API call has minor variations
-    # print(len(f_ids)) #5000
+    # # obtain id's of user's followers. API call will return 5000 ids
+    # f_ids = api.followers_ids(screen_name='BarackObama')
+    # # # print(f_ids[:50]) #order of ids returned by API call has minor variations
+    # # # print(len(f_ids)) #5000
     
-    legit_followers = []
-    n = 1  # counter for simple progress bar
-    for i in range(len(f_ids)-1):
+    # legit_followers = []
+    # n = 1  # counter for simple progress bar
+    # for i in range(len(f_ids[:5])-1):
         
-        # print '#' in progress bar at every 5 iteration
-        if i % 5 == 0:
-            print(n*'#', end='\r')
-            n += 1
+    #     # print '#' in progress bar at every 5 iteration
+    #     if i % 5 == 0:
+    #         print(n*'#', end='\r')
+    #         n += 1
 
-        try:
-            # obtain follower object from API
-            follower = api.get_user(f_ids[i])
-            # check if follower has minimum followers count
-            if follower.followers_count > 10000:
-                legit_followers.append(follower)
-        #do nothing/move on to next iteration if API call returns an exception/error
-        except tweepy.TweepError:
-            pass
+    #     try:
+    #         # obtain follower object from API
+    #         follower = api.get_user(f_ids[i])
+    #         print(follower)
+    #         # check if follower has minimum followers count
+    #         if follower.followers_count > 10000:
+    #             legit_followers.append(follower)
+    #     #do nothing/move on to next iteration if API call returns an exception/error
+    #     except tweepy.TweepError:
+    #         pass
 
-        # pause the script for 1s to avoid rate limit exceeded (900 API calls/15 mins)
-        time.sleep(1)
+    #     # pause the script for 1s to avoid rate limit exceeded (900 API calls/15 mins)
+    #     time.sleep(1)
 
-    # convert array of legit followers to pandas DataFrame for better visualization (unnecessary if followers are stored into database inside the loop)
-    legit_followers_df = user_analyzer.followers_to_data_frame(legit_followers)
-    print('\n')
-    print(legit_followers_df)
+    # # convert array of legit followers to pandas DataFrame for better visualization (unnecessary if followers are stored into database inside the loop)
+    # legit_followers_df = user_analyzer.followers_to_data_frame(legit_followers)
+    # print('\n')
+    # print(legit_followers_df)
+
+    tweet_analyzer = TweetAnalyzer()
+    tweets = api.user_timeline(screen_name='Neelofa')
+    print(tweets)
+
+    tweet_df = tweet_analyzer.tweets_to_data_frame(tweets)
+    print(tweet_df)
+    print(dir(tweets[0]))
