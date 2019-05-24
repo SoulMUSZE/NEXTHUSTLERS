@@ -6,7 +6,7 @@ from credentials import *
 
 # Google Maps API
 gmaps = googlemaps.Client(key=google_api)
-geocode_result = gmaps.geocode('TTDI')
+geocode_result = gmaps.geocode('Kuala Lumpur')
 
 
 latitude = (geocode_result[0]['geometry']['location']['lat'])
