@@ -5,7 +5,6 @@ from tweetcrawler.models.basemodel import BaseModel
 import datetime
 
 
-
 # class User(BaseModel):
 #     __tablename__ = 'user'
 #     id = db.Column(db.Integer, primary_key=True)
