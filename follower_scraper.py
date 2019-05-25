@@ -9,15 +9,12 @@ import pandas as pd
 import json
 import time
 
-### Mate's changes ###
 from tweetcrawler import db
 from tweetcrawler.model import Users
-###
+
 
 
 # # # # TWITTER AUTHENTICATOR # # # #
-
-
 class TwitterAuthenticator():
 
     def authenticate_twitter_app(self):
@@ -25,9 +22,8 @@ class TwitterAuthenticator():
         auth.set_access_token(credentials.ACCESS_KEY,credentials.ACCESS_SECRET)
         return auth
 
- # # # # # TWITTER CLIENT # # # # # #
 
-
+# # # # # TWITTER CLIENT # # # # # #
 class TwitterClient():
     def __init__(self, twitter_user=None):
         self.auth = TwitterAuthenticator().authenticate_twitter_app()
@@ -119,10 +115,6 @@ if __name__ == '__main__':
                     print(f'{follower.name} added to database.')
                     print(f'{user_count} users matching the filters saved into database')
                 
-
-
-
-         
 
         #do nothing/move on to next iteration if API call returns an exception/error
         except tweepy.TweepError:
