@@ -15,8 +15,12 @@ def index():
 
 @app.route("/maps", methods=['GET', 'POST'])
 def trends():
+
     # Google Maps API
-    # address = request.json.get('location')
+    # if request.method == "POST":
+    #     search = request.form["place-name"]
+    #     return search
+    # search = request.get["place-name"]
 
     gmaps = googlemaps.Client(key=google_api)
     geocode_result = gmaps.geocode('Kuala Lumpur')
@@ -42,4 +46,4 @@ def trends():
     for x in trends:
         trends_names.append(x['name'])
 
-    return render_template('maps.html', hashtags=trends_names, API_KEY=google_api)
+    return render_template('maps.html', hashtags=trends_names[:10], API_KEY=google_api)
