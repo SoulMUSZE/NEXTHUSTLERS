@@ -1,13 +1,14 @@
 # from models import TargetUser, Follower
 
 from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import jsonify
 from tweetcrawler import app
 import googlemaps
 import sys
 import tweepy
 import json
-from credentials import *
 
+from credentials import *
 
 from tweetcrawler.model import Users
 from flask_wtf import FlaskForm
@@ -49,41 +50,50 @@ def index():
     page = request.args.get('page', 1, type=int)
     users = result.order_by(Users.followers_count.desc()).paginate(page=page, per_page=5)
 
-
     return render_template('home.html', users=users)
   
 
 @app.route("/maps", methods=['GET', 'POST'])
 def trends():
 
-    # Google Maps API
-    # if request.method == "POST":
-    #     search = request.form["place-name"]
-    #     return search
-    # search = request.get["place-name"]
+    if request.method == 'POST':
+        print('Incoming..')
+        place_name = request.json()
+        print(place_name) 
+        
+        # call twitter geocode API 
+        gmaps = googlemaps.Client(key=google_api)
 
-    gmaps = googlemaps.Client(key=google_api)
-    geocode_result = gmaps.geocode('Kuala Lumpur')
+        geocode_result = gmaps.geocode(place_name)
 
-    latitude = (geocode_result[0]['geometry']['location']['lat'])
-    longitude = (geocode_result[0]['geometry']['location']['lng'])
+        latitude = (geocode_result[0]['geometry']['location']['lat'])
+        longitude = (geocode_result[0]['geometry']['location']['lng'])
 
-    # TWITTER API
+        # TWITTER API
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
+        auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
+        auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
+        api = tweepy.API(auth)
 
-    closest_result = api.trends_closest(latitude, longitude)
-    woeid = (closest_result[0]['woeid'])
+        closest_result = api.trends_closest(latitude, longitude)
+        woeid = (closest_result[0]['woeid'])
 
-    trends_result = api.trends_place(woeid)
-    trends = (trends_result[0]['trends'])
+        trends_result = api.trends_place(woeid)
+        trends = (trends_result[0]['trends'])
 
-    # ARRAY TO STORE THE TRENDS NAMES
-    trends_names = []
+        # ARRAY TO STORE THE TRENDS NAMES
+        hashtags = []
 
-    for x in trends:
-        trends_names.append(x['name'])
+        for trend in trends:
+            hashtags.append(trend['name'])
 
-    return render_template('maps.html', hashtags=trends_names[:10], API_KEY=google_api)
+        # return 'OK', 200
+        return hashtags, 200
+
+    # GET request
+    return render_template('maps.html', API_KEY = google_api)
+        
+
+
+   
+
