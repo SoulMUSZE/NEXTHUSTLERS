@@ -83,10 +83,10 @@
         <span id="place-name" class="title"></span><br>
         <span id="place-address"></span><br><br />
         <strong>
-            <div>
-                {% for tag in hashtags %}
+            <div id='hashtags'>
+                <!-- {% for tag in hashtags %}
                 <span id="trends">{{tag}} <br /></span>
-                {% endfor %}
+                {% endfor %} -->
             </div>
         </strong>
         <!-- : <span id="place-id"></span> -->
@@ -142,38 +142,26 @@
 
                 $.ajax({
                     url: '/maps',
-                    contentType: 'application/json',
-                    data: JSON.stringify(place.name),
-                    type: 'POST',
+                    data: { place: place.name },
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     success: function (response) {
                         console.log(response);
+                        // results = getElementById('hashtags')
+                        // results.innerHTML = respons
+                        $("#hashtags").html(
+                            response
+                            // for (let i = 0; i < 10; i++) {
+                            //     response[i]
+                            // }
+                        );
                     },
                     error: function (error) {
                         console.log(error);
                     }
                 });
-
-
-                // // post place name to python view function
-                // fetch('/maps', {
-                //     // Specify the method
-                //     method: 'POST',
-                //     // credentials: 'include',
-                //     // JSON
-                //     headers: {
-                //         'Content-Type': 'application/json'
-                //     },
-                //     // A JSON payload
-                //     body: JSON.stringify({
-                //         "place_name": place.name
-                //     })
-                // }).then(function (response) { // At this point, Flask has printed our JSON
-                //     return response.text();
-                // }).then(function (text) {
-                //     console.log('POST response: ');
-                //     // Should be 'OK' if everything was successful
-                //     console.log(text);
-                // });
 
 
                 if (!place.place_id) {
