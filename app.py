@@ -17,4 +17,4 @@ if os.getenv('FLASK_ENV') == 'production':
 else:
     app.config.from_object("config.DevelopmentConfig")
 
-csrf = CSRFProtect(app)
+# csrf = CSRFProtect(app)

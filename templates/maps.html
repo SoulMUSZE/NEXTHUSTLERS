@@ -149,12 +149,6 @@
                     },
                     success: function (response) {
                         console.log(response);
-                        // results = getElementById('hashtags')
-                        // results.innerHTML = respons
-                        // for (let i = 0; i < 10; i++) {
-                        //     let tags = response[i]
-                        //     $("#hashtags").html(tags)
-                        // }
                         var newHTML = [];
                         for (var i = 0; i < 10; i++) {
                             newHTML.push('<div>' + response[i] + '</div>');

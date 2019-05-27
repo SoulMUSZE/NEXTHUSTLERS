@@ -1,4 +1,5 @@
-from tweetcrawler.routes import app
+# from tweetcrawler.routes import app
+from app import app
 # from tweetcrawler.model import User, TargetUser, Followers
 
 # from tweetcrawler import db
