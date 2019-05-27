@@ -2,7 +2,7 @@
 
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import jsonify
-from tweetcrawler import app
+from app import app
 import googlemaps
 import sys
 import tweepy
@@ -10,7 +10,7 @@ import json
 
 from credentials import *
 
-from tweetcrawler.model import Users
+from model import Users
 from flask_wtf import FlaskForm
 
 
