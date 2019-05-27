@@ -38,31 +38,32 @@ def index():
 
     if followers:
         if followers == '1':
-            result = result.filter(Users.followers_count <= followersDict.get(followers))
+            result = result.filter(
+                Users.followers_count <= followersDict.get(followers))
         elif followers == '4':
             result = result.\
-                    filter(Users.followers_count >= followersDict.get(followers))
+                filter(Users.followers_count >= followersDict.get(followers))
         elif followers == '2' or followers == '3':
             result = result.\
-                    filter(Users.followers_count.between(followersDict.get(followers)[0], followersDict.get(followers)[1]))
-    
+                filter(Users.followers_count.between(followersDict.get(
+                    followers)[0], followersDict.get(followers)[1]))
 
     page = request.args.get('page', 1, type=int)
-    users = result.order_by(Users.followers_count.desc()).paginate(page=page, per_page=5)
+    users = result.order_by(Users.followers_count.desc()
+                            ).paginate(page=page, per_page=5)
 
     return render_template('home.html', users=users)
-  
+
 
 @app.route("/maps", methods=['GET', 'POST'])
 def trends():
 
-    if request.method == 'POST':        
-    
-        
+    if request.method == 'POST':
+
         place_name = request.data.decode('utf-8').split("=")[-1]
-    
+
         # breakpoint()
-        # call twitter geocode API 
+        # call twitter geocode API
         gmaps = googlemaps.Client(key=google_api)
 
         geocode_result = gmaps.geocode(place_name)
@@ -88,14 +89,9 @@ def trends():
         for x in trends:
             trends_names.append(x['name'])
 
-        # breakpoint()    
+        # breakpoint()
         # # return 'OK', 200
         return jsonify(trends_names), 200
 
     # GET request
-    return render_template('maps.html', API_KEY = google_api)
-        
-
-
-   
-
+    return render_template('maps.html', API_KEY=google_api)

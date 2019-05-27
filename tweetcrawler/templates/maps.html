@@ -64,7 +64,7 @@
             font-size: 15px;
         }
 
-        #trends {
+        #hashtags {
             font-size: 15px;
         }
 
@@ -151,12 +151,15 @@
                         console.log(response);
                         // results = getElementById('hashtags')
                         // results.innerHTML = respons
-                        $("#hashtags").html(
-                            response
-                            // for (let i = 0; i < 10; i++) {
-                            //     response[i]
-                            // }
-                        );
+                        // for (let i = 0; i < 10; i++) {
+                        //     let tags = response[i]
+                        //     $("#hashtags").html(tags)
+                        // }
+                        var newHTML = [];
+                        for (var i = 0; i < 10; i++) {
+                            newHTML.push('<div>' + response[i] + '</div>');
+                        }
+                        $("#hashtags").html(newHTML.join(""));
                     },
                     error: function (error) {
                         console.log(error);
