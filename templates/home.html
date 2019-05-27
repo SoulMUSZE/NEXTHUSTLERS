@@ -23,6 +23,7 @@
                       </select>
                       
                       <button type="submit" class="btn btn-primary ml-2">Search</button>
+                      <a href="{url_for('index')}"><button class="btn btn-warning ml-2">Reset Filters</button></a>
                 </form>
             </div>
             <div class="text-center">
@@ -42,19 +43,29 @@
                 <thead>
                   <tr>
                     <!-- <th scope="col">#</th> -->
-                    <th scope="col">Username</th>
-                    <th scope="col">Followers</th>
-                    <th scope="col">Location</th>
+                    <th class="text-center" scope="col">Username</th>
+                    <th class="text-center" scope="col">Profile Photo</th>
+                    <th class="text-center" scope="col">Followers</th>
+                    <th class="text-center" scope="col">Following</th>
+                    <th class="text-center" scope="col">Location</th>
                     <!-- <th scope="col">Handle</th> -->
                   </tr>
                 </thead>
                 
                 <tbody>
                 {% for user in users.items %}
-                  <tr>
+                  <tr class="text-center">
                     
                     <td> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
+                      <!-- Profile Photo Check/Display-->
+                      {% if user.profile_image_url %}
+                        <td class="text-center"> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank"><img class="rounded-circle" src="{{ user.profile_image_url }}"></a></td>
+                      {% else %}
+                        <td class="text-center"><p>n/a</p></td>
+                      {% endif%}
+                    
                     <td>{{ user.followers_count}}</td>
+                    <td>{{ user.friends_count}}</td>
                     <td> {{ user.location }}</td>
                   
                   </tr>

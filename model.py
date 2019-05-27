@@ -1,5 +1,5 @@
 from datetime import datetime
-from tweetcrawler import db
+from app import db
 from flask_sqlalchemy import SQLAlchemy
 from tweetcrawler.models.basemodel import BaseModel
 import datetime
@@ -41,9 +41,8 @@ class Users(BaseModel):
     friends_count = db.Column(db.Integer(), nullable=False)
     profile_created_at = db.Column(db.DateTime, index=True)
     protected = db.Column(db.Boolean, default=False) 
+    profile_image_url = db.Column(db.String(20), nullable=True, default="")
 
-
-    # profile_image_url = db.Column(db.String(20), nullable=False)
 
     # def __repr__(self):
     #     return f"User('{self.screen_name}','{self.full_name}' '{self.profile_image_url}')"

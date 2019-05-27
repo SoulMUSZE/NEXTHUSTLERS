@@ -1,7 +1,7 @@
 import os
 from flask_sqlalchemy import SQLAlchemy
 import datetime
-from tweetcrawler import db
+from app import db
 
 # from database import db ???
 

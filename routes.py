@@ -1,7 +1,7 @@
 # from models import TargetUser, Follower
 from flask import Flask, render_template, request, url_for, flash, redirect
-from tweetcrawler import app
-from tweetcrawler.model import Users
+from app import app
+from model import Users
 from flask_wtf import FlaskForm
 
 # def autocomplete():

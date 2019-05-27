@@ -9,8 +9,8 @@ import pandas as pd
 import json
 import time
 
-from tweetcrawler import db
-from tweetcrawler.model import Users
+from app import db
+from model import Users
 
 
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             
             
             # check if follower has minimum followers count
-            if follower.followers_count > 10:
+            if follower.followers_count > 100:
                 legit_followers.append(follower)
 
                       
@@ -108,7 +108,8 @@ if __name__ == '__main__':
                                 followers_count=follower.followers_count,
                                 friends_count=follower.friends_count,
                                 profile_created_at = follower.created_at,
-                                protected=follower.protected)
+                                protected=follower.protected,
+                                profile_image_url=follower.profile_image_url)
                     db.session.add(save)
                     db.session.commit()
                     
