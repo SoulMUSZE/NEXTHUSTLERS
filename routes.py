@@ -62,7 +62,6 @@ def trends():
 
         place_name = request.data.decode('utf-8').split("=")[-1]
 
-        # breakpoint()
         # call twitter geocode API
         gmaps = googlemaps.Client(key=google_api)
 
@@ -89,8 +88,6 @@ def trends():
         for x in trends:
             trends_names.append(x['name'])
 
-        # breakpoint()
-        # # return 'OK', 200
         return jsonify(trends_names), 200
 
     # GET request
