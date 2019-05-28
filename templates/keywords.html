@@ -1,0 +1,23 @@
+{% extends "_layout.html" %}
+
+{% block content %}
+
+<div class=container>
+
+    <h1>Related Keywords</h1>
+
+    <form action="{{ url_for('keywords') }}" method='POST'>
+        <div class="form-group">
+            <label for="seedWord">Enter Word:</label>
+            <input name="seedWord" type="string" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <div id='related-keywords'>
+        <p></p>
+        {{keywords}}
+    </div>
+
+</div>
+{% endblock %}
