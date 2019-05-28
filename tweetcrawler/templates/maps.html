@@ -65,7 +65,7 @@
         }
 
         #hashtags {
-            font-size: 15px;
+            font-size: 18px;
         }
 
         #map #infowindow-content {
@@ -125,12 +125,17 @@
             var infowindowContent = document.getElementById('infowindow-content');
             infowindow.setContent(infowindowContent);
 
+
             var geocoder = new google.maps.Geocoder;
 
             var marker = new google.maps.Marker({ map: map });
             marker.addListener('click', function () {
                 infowindow.open(map, marker);
+                console.log(infowindowContent)
             });
+
+
+
 
             autocomplete.addListener('place_changed', function () {
 
@@ -147,19 +152,35 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+
                     success: function (response) {
                         console.log(response);
+
                         // results = getElementById('hashtags')
-                        // results.innerHTML = respons
+
+                        // results.innerHTML = response
+
                         // for (let i = 0; i < 10; i++) {
                         //     let tags = response[i]
                         //     $("#hashtags").html(tags)
                         // }
-                        var newHTML = [];
-                        for (var i = 0; i < 10; i++) {
-                            newHTML.push('<div>' + response[i] + '</div>');
-                        }
-                        $("#hashtags").html(newHTML.join(""));
+                        $('#hashtags').html('')
+                        response.forEach(({ tag, volume }) => {
+                            const linkTag = tag.startsWith('#') ? tag.substring(1) : tag
+                            $("#hashtags").append(`
+                            <div>
+                                <strong><a target="_blank" href="https://twitter.com/hashtag/${linkTag}">${tag}</a></strong>
+                                <em>${volume}</em>
+                            </div>
+                            `);
+
+                        })
+
+                        // var newHTML = [];
+                        // for (let i = 0; i < 10; i++) {
+                        //     newHTML.push('<div>' + response[i] + '</div>');
+                        // }
+                        // $("#hashtags").html(newHTML.join(""));
                     },
                     error: function (error) {
                         console.log(error);
@@ -192,7 +213,37 @@
 
                     infowindow.open(map, marker);
                 });
+
+                // google.maps.event.addListener(map, 'click', function (event) {
+                //     placeMarker(event.latLng);
+                //     // var marker = new google.maps.Marker({
+                //     //     position: event.latLng,
+                //     //     map: map,
+                //     //     title: event.latLng.lat() + ', ' + event.latLng.lng()
+                //     // });
+                // });
+
+                // function placeMarker(location) {
+                //     if (!marker || !marker.setPosition) {
+                //         marker = new google.maps.Marker({
+                //             position: location,
+                //             map: map,
+                //         });
+                //     } else {
+                //         marker.setPosition(location);
+                //     }
+                //     if (!!infowindow && !!infowindow.close) {
+                //         infowindow.close();
+                //     }
+                //     infowindow = new google.maps.InfoWindow({
+                //         content: 'Latitude: ' + location.lat() + '<br>Longitude: ' + location.lng()
+                //     });
+
+                //     console.log(infowindow)
+                //     infowindow.open(map, marker);
+                // }
             });
+
         }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&callback=initMap" async

@@ -86,12 +86,28 @@ def trends():
         # ARRAY TO STORE THE TRENDS NAMES
         trends_names = []
 
+        # ARRAY TO STORE THE TWEET VOLUME
+        tweets_volumes = []
+
+        # ARRAY TO STORE THE HASHTAGS AND TWEET VOLUME
+        name_volume = []
+
         for x in trends:
             trends_names.append(x['name'])
 
-        # breakpoint()
+        for y in trends:
+            tweets_volumes.append(y['tweet_volume'])
+
+        for a, b in zip(trends_names, tweets_volumes):
+            # name_volume.append(a)
+            # name_volume.append(b)
+            name_volume.append({
+                'tag': a,
+                'volume': b
+            })
+
         # # return 'OK', 200
-        return jsonify(trends_names), 200
+        return jsonify(name_volume[:10]), 200
 
     # GET request
     return render_template('maps.html', API_KEY=google_api)
