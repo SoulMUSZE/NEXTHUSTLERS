@@ -7,12 +7,14 @@ import googlemaps
 import sys
 import tweepy
 import json
+import random
 
 from credentials import *
 
 from model import Users
 from flask_wtf import FlaskForm
 
+from keyword_api_client import RestClient
 
 # def autocomplete():
 #     data = Locations.query.filter(Locations.name.ilike(request.form.get('keyword')))
@@ -56,7 +58,7 @@ def index():
 
 
 @app.route("/maps", methods=['GET', 'POST'])
-def trends():
+def trendsmaps():
 
     if request.method == 'POST':
 
@@ -83,12 +85,74 @@ def trends():
         trends = (trends_result[0]['trends'])
 
         # ARRAY TO STORE THE TRENDS NAMES
-        trends_names = []
+        hashtags = []
 
-        for x in trends:
-            trends_names.append(x['name'])
+        for trend in trends:
+            hashtags.append(trend['name'])
 
-        return jsonify(trends_names), 200
+        return jsonify(hashtags), 200
 
     # GET request
     return render_template('maps.html', API_KEY=google_api)
+
+
+@app.route("/keywords", methods=['GET', 'POST'])
+def keywords():
+
+    if request.method == 'POST':
+
+        client = RestClient(SEO_LOGIN, SEO_PASSWORD )
+
+        # you can set as "index of post_data" your ID, string, etc. we will return it with all results.
+        # rnd = Random()
+        seedWord = request.form.get("seedWord")
+
+        post_data = dict()
+        # post_data[random.randint(1, 30000000)] = dict(
+        post_data['NEXTHUSTLERS'] = dict(
+            keyword = seedWord,
+            country_code="US",
+            language="en",
+            depth=2,
+            limit=5,
+            offset=0,
+            orderby="cpc,desc",
+            filters=[
+                ["cpc", ">", 0],
+                "or",
+                [
+                    ["search_volume", ">", 0],
+                    "and",
+                    ["search_volume", "<=", 1000]
+                ]
+            ]
+        )
+
+        response = client.post("/v2/kwrd_finder_related_keywords_get", dict(data=post_data))
+        
+        if response["status"] == "error":
+            print("error. Code: %d Message: %s" %
+                (response["error"]["code"], response["error"]["message"]))
+            return render_template('keywords.html', keywords = "API Error")
+        else:
+            keywords = response['results']['NEXTHUSTLERS']['related']
+
+            if keywords == "No data":
+                return render_template('keywords.html', keywords = keywords)
+            # print(response["results"])
+            else:
+                key_list = []
+                # breakpoint()
+                for keyword in keywords:
+                    key_list.append(keyword["key"])
+
+                # split strings in key_list by whitespace
+                split_key_list = [key.split() for key in key_list]
+                #flatten list
+                flattened_key_list = [item for sublist in split_key_list for item in sublist]
+                # keep only unique keywords
+                related_keywords = list(set(flattened_key_list))
+
+                return render_template('keywords.html', keywords = related_keywords)
+
+    return render_template('keywords.html')
