@@ -29,10 +29,15 @@ import datetime
 
 
 # source of data for the actual database
-class Users(BaseModel):
+# hashtag_usage = db.Table('hashtag_usage',
+#     db.Column('users_id', db.Integer, db.ForeignKey('users.id')),
+#     db.Column('hashtag_id', db.Integer, db.ForeignKey('hashtag.id'))
+#     )
+
+
+class User(BaseModel):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    # idol_id = db.Column(db.Integer, db.ForeignKey('target_user.id'), nullable=False)
     screen_name = db.Column(db.String(20), unique=True, nullable=False)
     full_name = db.Column(db.String(120), nullable=False)
     description = db.Column(db.String(120), nullable=True)
@@ -42,7 +47,35 @@ class Users(BaseModel):
     profile_created_at = db.Column(db.DateTime, index=True)
     protected = db.Column(db.Boolean, default=False) 
     profile_image_url = db.Column(db.String(20), nullable=True, default="")
+    tweets = db.relationship('Tweet', backref='user', lazy='dynamic')
+    # hashtag_used = db.relationship('Hashtag', secondary=hashtag_usage, backref=db.backref('hashtag_users', lazy='dynamic'))
+   
 
+class Tweet(BaseModel):
+    __tablename__ = 'tweet'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    tweet_id = db.Column(db.Integer(), nullable=False)
+    tweet_text = db.Column(db.String(140))
+    hashtags = db.relationship('HashtagUsage', backref='tweet')
+
+# middle table for Tweet / Hashtag
+class HashtagUsage(BaseModel):
+    __tablename__ = 'hashtag_usage'
+    __table_args__ = {'extend_existing': True} 
+    id = db.Column(db.Integer, primary_key=True)
+    tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.id'), nullable=False)
+    hashtag = db.Column(db.String(30), nullable=False)
+    # hashtag_id = db.Column(db.Integer, db.ForeignKey('hashtag.id'), nullable=False)
+   
+
+
+# class Hashtag(BaseModel):
+#     __tablename__ = 'hashtag'
+#     __table_args__ = {'extend_existing': True} 
+#     id = db.Column(db.Integer, primary_key=True)
+#     hashtag_name = db.Column(db.String(30))
+#     count = db.Column(db.Integer)
 
     # def __repr__(self):
     #     return f"User('{self.screen_name}','{self.full_name}' '{self.profile_image_url}')"

@@ -11,7 +11,7 @@ import random
 
 from credentials import *
 
-from model import Users
+from model import User, Tweet
 from flask_wtf import FlaskForm
 
 from keyword_api_client import RestClient
@@ -33,28 +33,31 @@ def index():
 
     city = request.args.get('city')
     followers = request.args.get('followers')
-    result = Users.query
-
+    result = User.query
+    tweets = Tweet.query
+    
+    # Filter / City
     if city:
-        result = result.filter(Users.location.ilike(f"%{city}%"))
+        result = result.filter(User.location.ilike(f"%{city}%"))
 
+    # Filter / Follower count
     if followers:
         if followers == '1':
             result = result.filter(
-                Users.followers_count <= followersDict.get(followers))
+                User.followers_count <= followersDict.get(followers))
         elif followers == '4':
             result = result.\
-                filter(Users.followers_count >= followersDict.get(followers))
+                filter(User.followers_count >= followersDict.get(followers))
         elif followers == '2' or followers == '3':
             result = result.\
-                filter(Users.followers_count.between(followersDict.get(
+                filter(User.followers_count.between(followersDict.get(
                     followers)[0], followersDict.get(followers)[1]))
 
     page = request.args.get('page', 1, type=int)
-    users = result.order_by(Users.followers_count.desc()
+    users = result.order_by(User.followers_count.desc()
                             ).paginate(page=page, per_page=5)
 
-    return render_template('home.html', users=users)
+    return render_template('home.html', users=users, tweets=tweets)
 
 
 @app.route("/maps", methods=['GET', 'POST'])
