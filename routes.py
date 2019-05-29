@@ -58,12 +58,13 @@ def index():
 
 
 @app.route("/maps", methods=['GET', 'POST'])
-def trendsmaps():
+def trends():
 
     if request.method == 'POST':
 
         place_name = request.data.decode('utf-8').split("=")[-1]
 
+        # breakpoint()
         # call twitter geocode API
         gmaps = googlemaps.Client(key=google_api)
 
@@ -85,12 +86,30 @@ def trendsmaps():
         trends = (trends_result[0]['trends'])
 
         # ARRAY TO STORE THE TRENDS NAMES
-        hashtags = []
+        trends_names = []
 
-        for trend in trends:
-            hashtags.append(trend['name'])
+        # ARRAY TO STORE THE TWEET VOLUME
+        tweets_volumes = []
 
-        return jsonify(hashtags), 200
+        # ARRAY TO STORE THE HASHTAGS AND TWEET VOLUME
+        name_volume = []
+
+        for x in trends:
+            trends_names.append(x['name'])
+
+        for y in trends:
+            tweets_volumes.append(y['tweet_volume'])
+
+        for a, b in zip(trends_names, tweets_volumes):
+            # name_volume.append(a)
+            # name_volume.append(b)
+            name_volume.append({
+                'tag': a,
+                'volume': b
+            })
+
+        # # return 'OK', 200
+        return jsonify(name_volume[:10]), 200
 
     # GET request
     return render_template('maps.html', API_KEY=google_api)

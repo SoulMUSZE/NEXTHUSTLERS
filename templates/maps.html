@@ -2,6 +2,7 @@
 
 {% block content%}
 
+
 <!DOCTYPE html>
 <html>
 
@@ -64,7 +65,7 @@
         }
 
         #hashtags {
-            font-size: 15px;
+            font-size: 18px;
         }
 
         #map #infowindow-content {
@@ -83,7 +84,9 @@
         <span id="place-address"></span><br><br />
         <strong>
             <div id='hashtags'>
-                <!-- jquery in AJAX will insert to innerHTML here -->
+                <!-- {% for tag in hashtags %}
+                <span id="trends">{{tag}} <br /></span>
+                {% endfor %} -->
             </div>
         </strong>
         <!-- : <span id="place-id"></span> -->
@@ -96,6 +99,12 @@
         // src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
 
         function initMap() {
+
+            // var xhr = new XMLHttpRequest();
+
+            // xhr.open('POST', '/maps', true);
+            // xhr.responseType = 'text';
+            // xhr.send(document.getElementById('place-name').value);
 
             var map = new google.maps.Map(
                 document.getElementById('map'),
@@ -116,12 +125,17 @@
             var infowindowContent = document.getElementById('infowindow-content');
             infowindow.setContent(infowindowContent);
 
+
             var geocoder = new google.maps.Geocoder;
 
             var marker = new google.maps.Marker({ map: map });
             marker.addListener('click', function () {
                 infowindow.open(map, marker);
+                console.log(infowindowContent)
             });
+
+
+
 
             autocomplete.addListener('place_changed', function () {
 
@@ -138,13 +152,35 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
+
                     success: function (response) {
                         console.log(response);
-                        var newHTML = [];
-                        for (var i = 0; i < 10; i++) {
-                            newHTML.push('<div>' + response[i] + '</div>');
-                        }
-                        $("#hashtags").html(newHTML.join(""));
+
+                        // results = getElementById('hashtags')
+
+                        // results.innerHTML = response
+
+                        // for (let i = 0; i < 10; i++) {
+                        //     let tags = response[i]
+                        //     $("#hashtags").html(tags)
+                        // }
+                        $('#hashtags').html('')
+                        response.forEach(({ tag, volume }) => {
+                            const linkTag = tag.startsWith('#') ? tag.substring(1) : tag
+                            $("#hashtags").append(`
+                            <div>
+                                <strong><a target="_blank" href="https://twitter.com/hashtag/${linkTag}">${tag}</a></strong>
+                                <em>${volume}</em>
+                            </div>
+                            `);
+
+                        })
+
+                        // var newHTML = [];
+                        // for (let i = 0; i < 10; i++) {
+                        //     newHTML.push('<div>' + response[i] + '</div>');
+                        // }
+                        // $("#hashtags").html(newHTML.join(""));
                     },
                     error: function (error) {
                         console.log(error);
@@ -177,7 +213,37 @@
 
                     infowindow.open(map, marker);
                 });
+
+                // google.maps.event.addListener(map, 'click', function (event) {
+                //     placeMarker(event.latLng);
+                //     // var marker = new google.maps.Marker({
+                //     //     position: event.latLng,
+                //     //     map: map,
+                //     //     title: event.latLng.lat() + ', ' + event.latLng.lng()
+                //     // });
+                // });
+
+                // function placeMarker(location) {
+                //     if (!marker || !marker.setPosition) {
+                //         marker = new google.maps.Marker({
+                //             position: location,
+                //             map: map,
+                //         });
+                //     } else {
+                //         marker.setPosition(location);
+                //     }
+                //     if (!!infowindow && !!infowindow.close) {
+                //         infowindow.close();
+                //     }
+                //     infowindow = new google.maps.InfoWindow({
+                //         content: 'Latitude: ' + location.lat() + '<br>Longitude: ' + location.lng()
+                //     });
+
+                //     console.log(infowindow)
+                //     infowindow.open(map, marker);
+                // }
             });
+
         }
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&callback=initMap" async
@@ -185,5 +251,205 @@
 </body>
 
 </html>
+
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Maps</title>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #description {
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+        }
+
+        #infowindow-content .title {
+            font-weight: bold;
+        }
+
+        #infowindow-content {
+            display: none;
+        }
+
+        #map #infowindow-content {
+            display: inline;
+        }
+
+        .pac-card {
+            margin: 10px 10px 0 0;
+            border-radius: 2px 0 0 2px;
+            box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            font-family: Roboto;
+        }
+
+        #pac-container {
+            padding-bottom: 12px;
+            margin-right: 12px;
+        }
+
+        .pac-controls {
+            display: inline-block;
+            padding: 5px 11px;
+        }
+
+        .pac-controls label {
+            font-family: Roboto;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        #pac-input {
+            background-color: #fff;
+            font-family: Roboto;
+            font-size: 15px;
+            font-weight: 300;
+            margin-left: 12px;
+            padding: 0 11px 0 13px;
+            text-overflow: ellipsis;
+            width: 400px;
+        }
+
+        #pac-input:focus {
+            border-color: #4d90fe;
+        }
+
+        #title {
+            color: #fff;
+            background-color: #4d90fe;
+            font-size: 25px;
+            font-weight: 500;
+            padding: 6px 12px;
+        }
+
+        #target {
+            width: 345px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div>
+        {% for tag in hashtags %}
+        <span>{{tag}}</span>
+        {% endfor %}
+    </div>
+
+    <input id="pac-input" class="controls" type="text" placeholder="Search Box" name="name">
+    <div id="map"></div>
+    <script>
+        // This example adds a search box to a map, using the Google Place Autocomplete
+        // feature. People can enter geographical searches. The search box will return a
+        // pick list containing a mix of places and predicted search terms.
+
+        // This example requires the Places library. Include the libraries=places
+        // parameter when you first load the API. For example:
+        // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+
+        // var overlay;
+
+        // Initialize the map and the custom overlay.
+        function initAutocomplete() {
+            var map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 3.1390, lng: 101.6869 },
+                zoom: 13,
+                mapTypeId: 'roadmap'
+            });
+
+
+            // Create the search box and link it to the UI element.
+            var input = document.getElementById('pac-input');
+            var searchBox = new google.maps.places.SearchBox(input);
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+            // Bias the SearchBox results towards current map's viewport.
+            map.addListener('bounds_changed', function () {
+                searchBox.setBounds(map.getBounds());
+            });
+
+            var markers = [];
+            // Listen for the event fired when the user selects a prediction and retrieve
+            // more details for that place.
+            searchBox.addListener('places_changed', function () {
+                var places = searchBox.getPlaces();
+                console.log(places[0].name)
+
+
+                if (places.length == 0) {
+                    return;
+                }
+
+                // var req = new XMLHttpRequest();
+
+                // req.open('POST', '/maps', true);
+                // req.send(places[0].name);
+
+                // Clear out the old markers.
+                markers.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+                markers = [];
+
+                // For each place, get the icon, name and location.
+                var bounds = new google.maps.LatLngBounds();
+                places.forEach(function (place) {
+                    if (!place.geometry) {
+                        console.log("Returned place contains no geometry");
+                        return;
+                    }
+                    var icon = {
+                        url: place.icon,
+                        size: new google.maps.Size(71, 71),
+                        origin: new google.maps.Point(0, 0),
+                        anchor: new google.maps.Point(17, 34),
+                        scaledSize: new google.maps.Size(25, 25)
+                    };
+
+                    // Create a marker for each place.
+                    markers.push(new google.maps.Marker({
+                        map: map,
+                        icon: icon,
+                        title: place.name,
+                        position: place.geometry.location
+                    }));
+
+                    if (place.geometry.viewport) {
+                        // Only geocodes have viewport.
+                        bounds.union(place.geometry.viewport);
+                    } else {
+                        bounds.extend(place.geometry.location);
+                    }
+                });
+                map.fitBounds(bounds);
+            });
+        }
+
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&callback=initAutocomplete"
+        async defer></script>
+</body>
+
+</html> -->
 
 {% endblock %}
