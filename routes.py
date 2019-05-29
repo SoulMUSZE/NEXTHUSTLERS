@@ -114,16 +114,16 @@ def keywords():
             country_code="US",
             language="en",
             depth=2,
-            limit=10,
+            limit=15,
             offset=0,
-            orderby="cpc,desc",
+            orderby="search_volume,desc",
             filters=[
                 ["cpc", ">", 0],
                 "or",
                 [
                     ["search_volume", ">", 0],
                     "and",
-                    ["search_volume", "<=", 1000]
+                    ["search_volume", "<=", 10000]
                 ]
             ]
         )
@@ -152,8 +152,10 @@ def keywords():
                 for keyword in keywords:
                     key_list.append({k: keyword[k] for k in ('key', 'search_volume')})
                 
-                sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
-                max_volume = sorted_key_list[0]['search_volume']
+                key_list = [pair for pair in key_list if pair['key'] != seedWord]
+
+                # sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
+                max_volume = key_list[0]['search_volume']
                 
                
 
@@ -166,7 +168,7 @@ def keywords():
                 # related_keywords = list(set(flattened_key_list))
 
                 # return render_template('keywords.html', keywords = related_keywords)
-                return render_template('keywords.html', keywords = sorted_key_list, max = max_volume)
+                return render_template('keywords.html', keywords = key_list, max = max_volume)
 
     # handle GET request
     return render_template('keywords.html')
