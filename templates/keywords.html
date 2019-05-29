@@ -9,15 +9,21 @@
     <form action="{{ url_for('keywords') }}" method='POST'>
         <div class="form-group">
             <label for="seedWord">Enter Word:</label>
-            <input name="seedWord" type="string" class="form-control">
+            <input name="seedWord" type="text" class="form-control">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button id='keyword-button' type="submit" class="btn btn-primary">Submit</button>
     </form>
 
-    <div id='related-keywords'>
-        <p></p>
-        {{keywords}}
+    <p></p>
+
+    {% for keyword in keywords %}
+    <label for="keyword">{{keyword['key']}}</label>
+    <div class="progress" style="height: 2rem;">
+        <div class="progress-bar bg-primary" role="progressbar"
+            style="width: {{keyword['search_volume']/max*100}}%" aria-valuemin="0"
+            aria-valuemax="100">{{keyword['search_volume']}}</div>
     </div>
+    {% endfor %}
 
 </div>
 {% endblock %}

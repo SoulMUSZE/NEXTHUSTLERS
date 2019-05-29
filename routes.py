@@ -101,7 +101,7 @@ def keywords():
 
     if request.method == 'POST':
 
-        client = RestClient(SEO_LOGIN, SEO_PASSWORD )
+        client = RestClient(SEO_LOGIN, SEO_PASSWORD)
 
         # you can set as "index of post_data" your ID, string, etc. we will return it with all results.
         # rnd = Random()
@@ -110,11 +110,11 @@ def keywords():
         post_data = dict()
         # post_data[random.randint(1, 30000000)] = dict(
         post_data['NEXTHUSTLERS'] = dict(
-            keyword = seedWord,
+            keyword=seedWord,
             country_code="US",
             language="en",
             depth=2,
-            limit=5,
+            limit=10,
             offset=0,
             orderby="cpc,desc",
             filters=[
@@ -128,31 +128,45 @@ def keywords():
             ]
         )
 
-        response = client.post("/v2/kwrd_finder_related_keywords_get", dict(data=post_data))
-        
+        response = client.post(
+            "/v2/kwrd_finder_related_keywords_get", dict(data=post_data))
+
         if response["status"] == "error":
             print("error. Code: %d Message: %s" %
                 (response["error"]["code"], response["error"]["message"]))
-            return render_template('keywords.html', keywords = "API Error")
+
+            return render_template('keywords.html', keywords="API Error")
         else:
             keywords = response['results']['NEXTHUSTLERS']['related']
 
             if keywords == "No data":
-                return render_template('keywords.html', keywords = keywords)
+                # return render_template('keywords.html', keywords = keywords)
+                return render_template('keywords.html', keywords=response['results'])
             # print(response["results"])
             else:
                 key_list = []
                 # breakpoint()
+                # for keyword in keywords:
+                #     key_list.append(keyword["key"])
+
                 for keyword in keywords:
-                    key_list.append(keyword["key"])
+                    key_list.append({k: keyword[k] for k in ('key', 'search_volume')})
+                
+                sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
+                max_volume = sorted_key_list[0]['search_volume']
+                
+               
 
-                # split strings in key_list by whitespace
-                split_key_list = [key.split() for key in key_list]
-                #flatten list
-                flattened_key_list = [item for sublist in split_key_list for item in sublist]
-                # keep only unique keywords
-                related_keywords = list(set(flattened_key_list))
+                # breakpoint()
+                # # split strings in key_list by whitespace
+                # split_key_list = [key.split() for key in key_list]
+                # #flatten list
+                # flattened_key_list = [item for sublist in split_key_list for item in sublist]
+                # # keep only unique keywords
+                # related_keywords = list(set(flattened_key_list))
 
-                return render_template('keywords.html', keywords = related_keywords)
+                # return render_template('keywords.html', keywords = related_keywords)
+                return render_template('keywords.html', keywords = sorted_key_list, max = max_volume)
 
+    # handle GET request
     return render_template('keywords.html')
