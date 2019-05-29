@@ -43,11 +43,13 @@
                 <thead>
                   <tr>
                     <!-- <th scope="col">#</th> -->
+                    <th class="text-center" scope="col"></th>
                     <th class="text-center" scope="col">Username</th>
                     <th class="text-center" scope="col">Profile Photo</th>
                     <th class="text-center" scope="col">Followers</th>
                     <th class="text-center" scope="col">Following</th>
                     <th class="text-center" scope="col">Location</th>
+                    <!-- <th class="text-center" scope="col">Hashtag</th> -->
                     <!-- <th scope="col">Handle</th> -->
                   </tr>
                 </thead>
@@ -55,7 +57,10 @@
                 <tbody>
                 {% for user in users.items %}
                   <tr class="text-center">
-                    
+                    <td><div class="checkbox">
+                        <label><input type="checkbox" value=""></label>
+                      </div></td>
+
                     <td> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
                       <!-- Profile Photo Check/Display-->
                       {% if user.profile_image_url %}
@@ -67,6 +72,7 @@
                     <td>{{ user.followers_count}}</td>
                     <td>{{ user.friends_count}}</td>
                     <td> {{ user.location }}</td>
+                    <!-- <td> {{ user.hashtag_name }}</td> -->
                   
                   </tr>
                 {% endfor %}
@@ -86,6 +92,10 @@
               ...
             {% endif %}
           {% endfor %}
+        </div>
+
+        <div>
+          <button class="save_to_csv_btn">Save to CSV</button>
         </div>
     
     </div>

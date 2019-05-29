@@ -10,7 +10,8 @@ import json
 import time
 
 from app import db
-from model import Users
+from model import User, Tweet, HashtagUsage
+from hashtag_scraper import run_hashtag_scrap
 
 
 
@@ -98,23 +99,54 @@ if __name__ == '__main__':
                 ### SAVE TO DATABASE ###
 
                 # check if the record exists in db
-                if bool(Users.query.filter_by(id=follower.id).first()):
+                if bool(User.query.filter_by(id=follower.id).first()):
                     print(f'User {follower.name} is already in the database')
                     pass
                 else:
                     user_count += 1
-                    save = Users(id=follower.id ,screen_name=follower.screen_name ,
+                    save_user = User(id=follower.id ,screen_name=follower.screen_name ,
                                 full_name=follower.name, location=follower.location,
                                 followers_count=follower.followers_count,
                                 friends_count=follower.friends_count,
                                 profile_created_at = follower.created_at,
                                 protected=follower.protected,
                                 profile_image_url=follower.profile_image_url)
-                    db.session.add(save)
-                    db.session.commit()
                     
+                    db.session.add(save_user)
+                    
+                    # [(id, ht_name), (id, ht_name)]
+                    hashtag_data = run_hashtag_scrap(follower.screen_name)
+
+                    for ht in hashtag_data:
+                        
+                        if bool(Tweet.query.filter_by(tweet_id=ht[1]).first()):
+                            print(f'Tweet || {ht[0]} || is already in the database')
+                            pass
+                        else:
+                            save_tweet = Tweet(tweet_text=ht[0], user_id=follower.id, tweet_id=ht[1])
+                            print(f'Tweet || {ht[0]} || saved into database')
+                            db.session.add(save_tweet)
+                            db.session.commit()
+                        
+                        save_hashtag_usage = HashtagUsage(tweet_id=ht[1], hashtag=ht[2])
+                        print(f'Hashtag {ht[2]} saved into database')
+                       
+                        db.session.add(save_hashtag_usage)
+                        # db.session.commit()
+
+                    db.session.commit()
+                      
                     print(f'{follower.name} added to database.')
+                    print(f'Hashtag {ht} added into database')
                     print(f'{user_count} users matching the filters saved into database')
+     
+                    
+                    # if bool(Hashtag.query.filter_by(hashtag_name=ht).first()):
+                    #     print(f'Hashtag {ht} is already in the database')
+                    #     pass
+                    # else:
+                    # save_hashtag = Hashtag(hashtag_name=ht[1])
+
                 
 
         #do nothing/move on to next iteration if API call returns an exception/error

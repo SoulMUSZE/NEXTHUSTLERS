@@ -44,7 +44,7 @@ class TweetAnalyzer():
         return df
 
 
-if __name__ == '__main__':
+def run_hashtag_scrap(name):
     # initialize class objects
     twitter_client = TwitterClient()
     tweet_analyzer = TweetAnalyzer()
@@ -54,7 +54,7 @@ if __name__ == '__main__':
 
     #specify the number of pages of user_timeline to scrape for tweets 
     num_pages = 20
-    user = 'Neelofa'
+    user = name
 
     tweets_list = []
     for i in range(1, num_pages + 1):
@@ -64,10 +64,12 @@ if __name__ == '__main__':
     #flatten the list of lists
     tweets = [val for sublist in tweets_list for val in sublist]
     # print(len(tweets))
-
-    tweet_df = tweet_analyzer.tweets_to_data_frame(tweets)
     
-    hashtag_list = tweet_df.hashtags.unique().tolist()
-    hashtag_list.remove('-')
-    print(hashtag_list)
-    # print(dir(tweets[0]))
+    tweet_df = tweet_analyzer.tweets_to_data_frame(tweets)
+    filtered_tweets = filter(lambda x: x[2] != '-', tweet_df.values.tolist())
+   
+    return [(tweet[0], tweet[1], tweet[2]) for tweet in filtered_tweets]
+    
+# run_hashtag_scrap('KatyPerry')
+
+# if __name__ == '__main__':
