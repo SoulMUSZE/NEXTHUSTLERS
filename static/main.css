@@ -30,5 +30,8 @@
     
 .save_to_csv_btn:focus {
     outline: none;
-    }
+}
 
+.progress {
+    margin-bottom: 1rem;
+}

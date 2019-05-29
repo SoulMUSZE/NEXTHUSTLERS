@@ -7,12 +7,14 @@ import googlemaps
 import sys
 import tweepy
 import json
+import random
 
 from credentials import *
 
 from model import User, Tweet
 from flask_wtf import FlaskForm
 
+from keyword_api_client import RestClient
 
 # def autocomplete():
 #     data = Locations.query.filter(Locations.name.ilike(request.form.get('keyword')))
@@ -65,6 +67,7 @@ def trends():
 
         place_name = request.data.decode('utf-8').split("=")[-1]
 
+        # breakpoint()
         # call twitter geocode API
         gmaps = googlemaps.Client(key=google_api)
 
@@ -88,10 +91,106 @@ def trends():
         # ARRAY TO STORE THE TRENDS NAMES
         trends_names = []
 
+        # ARRAY TO STORE THE TWEET VOLUME
+        tweets_volumes = []
+
+        # ARRAY TO STORE THE HASHTAGS AND TWEET VOLUME
+        name_volume = []
+
         for x in trends:
             trends_names.append(x['name'])
 
-        return jsonify(trends_names), 200
+        for y in trends:
+            tweets_volumes.append(y['tweet_volume'])
+
+        for a, b in zip(trends_names, tweets_volumes):
+            # name_volume.append(a)
+            # name_volume.append(b)
+            name_volume.append({
+                'tag': a,
+                'volume': b
+            })
+
+        # # return 'OK', 200
+        return jsonify(name_volume[:10]), 200
 
     # GET request
     return render_template('maps.html', API_KEY=google_api)
+
+
+@app.route("/keywords", methods=['GET', 'POST'])
+def keywords():
+
+    if request.method == 'POST':
+
+        client = RestClient(SEO_LOGIN, SEO_PASSWORD)
+
+        # you can set as "index of post_data" your ID, string, etc. we will return it with all results.
+        # rnd = Random()
+        seedWord = request.form.get("seedWord")
+
+        post_data = dict()
+        # post_data[random.randint(1, 30000000)] = dict(
+        post_data['NEXTHUSTLERS'] = dict(
+            keyword=seedWord,
+            country_code="US",
+            language="en",
+            depth=2,
+            limit=15,
+            offset=0,
+            orderby="search_volume,desc",
+            filters=[
+                ["cpc", ">", 0],
+                "or",
+                [
+                    ["search_volume", ">", 0],
+                    "and",
+                    ["search_volume", "<=", 10000]
+                ]
+            ]
+        )
+
+        response = client.post(
+            "/v2/kwrd_finder_related_keywords_get", dict(data=post_data))
+
+        if response["status"] == "error":
+            print("error. Code: %d Message: %s" %
+                (response["error"]["code"], response["error"]["message"]))
+
+            return render_template('keywords.html', keywords="API Error")
+        else:
+            keywords = response['results']['NEXTHUSTLERS']['related']
+
+            if keywords == "No data":
+                # return render_template('keywords.html', keywords = keywords)
+                return render_template('keywords.html', keywords=response['results'])
+            # print(response["results"])
+            else:
+                key_list = []
+                # breakpoint()
+                # for keyword in keywords:
+                #     key_list.append(keyword["key"])
+
+                for keyword in keywords:
+                    key_list.append({k: keyword[k] for k in ('key', 'search_volume')})
+                
+                key_list = [pair for pair in key_list if pair['key'] != seedWord]
+
+                # sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
+                max_volume = key_list[0]['search_volume']
+                
+               
+
+                # breakpoint()
+                # # split strings in key_list by whitespace
+                # split_key_list = [key.split() for key in key_list]
+                # #flatten list
+                # flattened_key_list = [item for sublist in split_key_list for item in sublist]
+                # # keep only unique keywords
+                # related_keywords = list(set(flattened_key_list))
+
+                # return render_template('keywords.html', keywords = related_keywords)
+                return render_template('keywords.html', keywords = key_list, max = max_volume)
+
+    # handle GET request
+    return render_template('keywords.html')
