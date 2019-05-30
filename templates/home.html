@@ -73,12 +73,17 @@
 
       <tbody>
         {% for user in users.items %}
-        <tr class="text-center text-dark">
+        <tr class="text-center text-dark" onclick = checkBox(event)>
+         
           <td>
-            <div>
-              <label><input type="checkbox" value=""></label>
+            <div id="{{ user.id }}">
+              <label><input onclick=checkBox(event) class="checkbox" type="checkbox"
+                  value="{{ user.screen_name,user.full_name,user.followers_count,user.friends_count,user.profile_created_at,user.protected }}"></label>
+
             </div>
           </td>
+
+
 
           <td> <a class="text-info" style="font-size:20px;font-family: 'Lato', sans-serif;"
               href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
@@ -218,12 +223,6 @@
       clickedCheckbox.checked = !clickedCheckbox.checked
     }
 
-    function exportCSV() {
-      const data = array.map(row => ({
-
-      }))
-      const csvData = objectToCsv(array)
-    }
 
   </script>
 
