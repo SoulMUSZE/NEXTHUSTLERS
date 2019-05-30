@@ -19,7 +19,7 @@
        * element that contains the map. */
         #map {
             height: 100%;
-            width: 80%;
+            width: 100%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -150,13 +150,24 @@
                 document.getElementById('pac-input').focus()
             })
 
-          
             // FIELD FOCUS ON KEYDOWN
             window.addEventListener('keydown', function(){
                 let field = document.getElementById('pac-input')
                 
                 field.focus()
             })
+
+            function initialize() {
+
+                var options = {
+                 types: ['(cities)'],
+                 componentRestrictions: {country: "us"}
+                };
+               
+                var input = document.getElementById('searchTextField');
+                var autocomplete = new google.maps.places.Autocomplete(input, options);
+               }
+               
             
             
             autocomplete.addListener('place_changed', function () {
@@ -272,6 +283,10 @@
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&types=(cities)&callback=initMap" async
         defer></script>
+
+        
+
+
 </body>
 
 </html>
