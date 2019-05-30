@@ -8,7 +8,6 @@
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-    <title>Twitter Trends</title>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -16,6 +15,9 @@
        * element that contains the map. */
         #map {
             height: 100%;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* Optional: Makes the sample page fill the window. */
@@ -24,6 +26,7 @@
             height: 100%;
             margin: 0;
             padding: 0;
+
         }
 
         .controls {
@@ -75,6 +78,9 @@
 </head>
 
 <body>
+
+    <!-- <h4 class=" text-center" style="font-family: 'Montserrat', sans-serif; font-weight: bold">HASHMAPS</h4> -->
+
     <div style="display: none">
         <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
     </div>
@@ -167,9 +173,11 @@
                         $('#hashtags').html('')
                         response.forEach(({ tag, volume }) => {
                             const linkTag = tag.startsWith('#') ? tag.substring(1) : tag
+                            // const vol = Number.isNaN(volume) ? vol.html('  ') : volume
+                            // const vol = volume.startsWith(' ') ? volume.html(' ') : volume
                             $("#hashtags").append(`
                             <div>
-                                <strong><a target="_blank" href="https://twitter.com/hashtag/${linkTag}">${tag}</a></strong>
+                                <strong><a class="text-info" target="_blank" href="https://twitter.com/hashtag/${linkTag}">${tag}</a></strong>
                                 <em>${volume}</em>
                             </div>
                             `);

@@ -39,7 +39,7 @@ def index():
     followers = request.args.get('followers')
     result = User.query
     tweets = Tweet.query
-    
+
     # Filter / City
     if city:
         result = result.filter(User.location.ilike(f"%{city}%"))
@@ -61,6 +61,13 @@ def index():
     users = result.order_by(User.followers_count.desc()
                             ).paginate(page=page, per_page=5)
 
+    # breakpoint()
+    # for user in result:
+    #     for tweet in user.tweets:
+    #         for hashtag in tweet.hashtags:
+    #             print(hashtag)
+
+    
     return render_template('home.html', users=users, tweets=tweets)
 
 
@@ -127,11 +134,12 @@ def keywords():
 
     if request.method == 'POST':
 
+        seedWord = request.form.get("seedWord")
+        
         client = RestClient(SEO_LOGIN, SEO_PASSWORD)
 
         # you can set as "index of post_data" your ID, string, etc. we will return it with all results.
         # rnd = Random()
-        seedWord = request.form.get("seedWord")
 
         post_data = dict()
         # post_data[random.randint(1, 30000000)] = dict(
@@ -159,7 +167,7 @@ def keywords():
 
         if response["status"] == "error":
             print("error. Code: %d Message: %s" %
-                (response["error"]["code"], response["error"]["message"]))
+                  (response["error"]["code"], response["error"]["message"]))
 
             return render_template('keywords.html', keywords="API Error")
         else:
@@ -176,14 +184,14 @@ def keywords():
                 #     key_list.append(keyword["key"])
 
                 for keyword in keywords:
-                    key_list.append({k: keyword[k] for k in ('key', 'search_volume')})
-                
-                key_list = [pair for pair in key_list if pair['key'] != seedWord]
+                    key_list.append({k: keyword[k]
+                                     for k in ('key', 'search_volume')})
+
+                key_list = [
+                    pair for pair in key_list if pair['key'] != seedWord]
 
                 # sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
                 max_volume = key_list[0]['search_volume']
-                
-               
 
                 # breakpoint()
                 # # split strings in key_list by whitespace
@@ -194,27 +202,12 @@ def keywords():
                 # related_keywords = list(set(flattened_key_list))
 
                 # return render_template('keywords.html', keywords = related_keywords)
-                return render_template('keywords.html', keywords = key_list, max = max_volume)
+                return render_template('keywords.html', keywords=key_list, max=max_volume)
 
     # handle GET request
     return render_template('keywords.html')
 
 
-
-# @app.route('/export')
-# def export():
-#     # results = generate_file_data()
-#     # generator = (cell for row in results for cell in row)
-
-#     # return Response(generator,
-#     #                     mimetype="text/plain",
-#     #                     headers={"Content-Disposition":
-#     #                         "attachment;filename=text.txt"})
-    
-#     si = io.StringIO()
-#     cw = csv.writer(si)
-#     cw.writerows(csvList)
-#     output = make_response(si.getvalue())
-#     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-#     output.headers["Content-type"] = "text/csv"
-#     return output
+@app.route("/about", methods=['GET', 'POST'])
+def about():
+    return render_template('about.html')
