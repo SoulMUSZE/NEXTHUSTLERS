@@ -3,8 +3,9 @@
 {% block content %}
 
 <div class=container>
+    <br />
 
-    <h1>Related Keywords</h1>
+    <h1 style="font-family: 'Montserrat', sans-serif; font-weight: bold">RELATED KEYWORDS</h1><br />
 
     <!-- {{keywords}} -->
 
@@ -13,7 +14,7 @@
             <label for="seedWord">Enter Word:</label>
             <input name="seedWord" type="text" class="form-control" , autocomplete="on">
         </div>
-        <button id='keyword-button' type="submit" class="btn btn-primary">Submit</button>
+        <button id='keyword-button' type="submit" class="btn btn-info">Submit</button>
     </form>
 
     <p></p>
@@ -29,14 +30,16 @@
                 <h4>Average Annual Search Volume</h4>
             </div>
         </div>
+        <br />
         {% for keyword in keywords %}
+
         <div class="row">
             <div class="col-3">
                 <label for="keyword">{{keyword['key']}}</label>
             </div>
             <div class="col-9">
                 <div class="progress" style="height: 2rem;">
-                    <div class="progress-bar bg-primary" role="progressbar"
+                    <div class="progress-bar bg-info" role="progressbar"
                         style="width: {{keyword['search_volume']/max*100}}%" aria-valuemin="0" aria-valuemax="100">
                         {{keyword['search_volume']}}</div>
                 </div>

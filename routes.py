@@ -35,7 +35,7 @@ def index():
     followers = request.args.get('followers')
     result = User.query
     tweets = Tweet.query
-    
+
     # Filter / City
     if city:
         result = result.filter(User.location.ilike(f"%{city}%"))
@@ -155,7 +155,7 @@ def keywords():
 
         if response["status"] == "error":
             print("error. Code: %d Message: %s" %
-                (response["error"]["code"], response["error"]["message"]))
+                  (response["error"]["code"], response["error"]["message"]))
 
             return render_template('keywords.html', keywords="API Error")
         else:
@@ -172,14 +172,14 @@ def keywords():
                 #     key_list.append(keyword["key"])
 
                 for keyword in keywords:
-                    key_list.append({k: keyword[k] for k in ('key', 'search_volume')})
-                
-                key_list = [pair for pair in key_list if pair['key'] != seedWord]
+                    key_list.append({k: keyword[k]
+                                     for k in ('key', 'search_volume')})
+
+                key_list = [
+                    pair for pair in key_list if pair['key'] != seedWord]
 
                 # sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
                 max_volume = key_list[0]['search_volume']
-                
-               
 
                 # breakpoint()
                 # # split strings in key_list by whitespace
@@ -190,7 +190,12 @@ def keywords():
                 # related_keywords = list(set(flattened_key_list))
 
                 # return render_template('keywords.html', keywords = related_keywords)
-                return render_template('keywords.html', keywords = key_list, max = max_volume)
+                return render_template('keywords.html', keywords=key_list, max=max_volume)
 
     # handle GET request
     return render_template('keywords.html')
+
+
+@app.route("/about", methods=['GET', 'POST'])
+def about():
+    return render_template('about.html')
