@@ -65,24 +65,24 @@ def index():
         '''
         HANDLE HASHTAGS
         '''
+
+    if seedWord:
+        
         key_list = get_related_keywords(seedWord)
 
         if key_list:
-            # sorted_key_list = sorted(key_list, key=lambda pair: pair['search_volume'], reverse=True)
-            max_volume = key_list[0]['search_volume']
-            pass
-            # return render_template('keywords.html', keywords=key_list, max=max_volume)
-        else:
-            pass
-            # return render_template('keywords.html', keywords=key_list)
+            # split strings in key_list by whitespace
+            split_key_list = [pair['key'].split() for pair in key_list]
+            #flatten list
+            flattened_key_list = [item for sublist in split_key_list for item in sublist]
+            # keep only unique keywords
+            related_keywords = list(set(flattened_key_list))
 
-        # breakpoint()
-        # # split strings in key_list by whitespace
-        # split_key_list = [key.split() for key in key_list]
-        # #flatten list
-        # flattened_key_list = [item for sublist in split_key_list for item in sublist]
-        # # keep only unique keywords
-        # related_keywords = list(set(flattened_key_list))
+        else:
+            related keywords = [seedWord]
+         
+
+        
 
 
     page = request.args.get('page', 1, type=int)
