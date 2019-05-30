@@ -3,19 +3,23 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask import jsonify
 from app import app
+
 import googlemaps
 import sys
 import tweepy
 import json
 import random
+import paralleldots
 
 from credentials import *
 
 from model import User, Tweet
 from flask_wtf import FlaskForm
+from app import db
 
 from keyword_api_client import RestClient, get_related_keywords
 
+paralleldots.set_api_key(PARALLELDOTS_API_KEY)
 # import io
 # import csv
 # from flask import Response
@@ -37,7 +41,7 @@ def index():
 
     # handle hashtags
     seedWord = request.args.get("seedWord")
-    
+
     city = request.args.get('city')
     followers = request.args.get('followers')
 
@@ -61,74 +65,80 @@ def index():
                 filter(User.followers_count.between(followersDict.get(
                     followers)[0], followersDict.get(followers)[1]))
 
-        
-        '''
+    page = request.args.get('page', 1, type=int)
+
+    users = result.order_by(User.followers_count.desc()
+                            ).paginate(page=page, per_page=5)
+
+    '''
         HANDLE HASHTAGS
         '''
-
     if seedWord:
-        
-        #get related keywords from SEO API
+
+        # get related keywords from SEO API
         key_list = get_related_keywords(seedWord)
 
         if key_list:
             # split strings in key_list by whitespace
             split_key_list = [pair['key'].split() for pair in key_list]
-            #flatten list
-            flattened_key_list = [item for sublist in split_key_list for item in sublist]
+            # flatten list
+            flattened_key_list = [
+                item for sublist in split_key_list for item in sublist]
             # keep only unique keywords
             related_keywords = list(set(flattened_key_list))
 
         else:
             related_keywords = [seedWord]
 
-    
-        # #grab user hashtags
-        # users_with_hashtags = []
-        # for user in result.all():
-        #     current_user = {
-        #         "name": user.screen_name,
-        #         "hashtags": []
-        #     }
-        #     # print(f"-- User: {user.screen_name}")
-        #     for tweet in user.tweets:
-        #         # print(f"- Tweet: {tweet.tweet_text}")
-        #         for hashtag in tweet.hashtags:
-        #             current_user["hashtags"].append(hashtag)
-        #             # print(f"Hashtag: {hashtag.hashtag}")
-            
-        #     users_with_hashtags.append(current_user)
-
-        # print(len(users_with_hashtags))
-
         for user in result.all():
-            
-            user_hashtags = []
-            
-            for tweet in user.tweets:
-                 for hashtag in tweet.hashtags:
-                     user_hashtags.append(hashtag.hashtag)
-            
-            # compare user_hashtags with related_keywords
-            pass
 
-            # save similarity score to DB 
-            save_user = User(similarity = similarity_score)
-            db.session.add(save_user) 
+            # get user hashtags
+            user_hashtags = []
+            for tweet in user.tweets:
+                for hashtag in tweet.hashtags:
+                    user_hashtags.append(hashtag.hashtag)
+
+            # compare user_hashtags with related_keywords
+            text1 = ' '.join(related_keywords)
+            if len(related_keywords) < 2:
+                text1 = text1 + ' ' + text1
+
+            text2 = ' '.join(user_hashtags)
+            if len(user_hashtags) < 2:
+                text2 = text2 + ' ' + text2
+
+            response = paralleldots.similarity(text1, text2)
+
+            # save similarity score to DB
+            user.similarity = response["similarity_score"]
             db.session.commit()
 
-        
+            users = result.order_by(User.similarity.desc()).paginate(
+                page=page, per_page=5)
 
-        
+            return render_template('home.html', users=users, tweets=tweets)
 
 
-    page = request.args.get('page', 1, type=int)
-
-    users = result.order_by(User.followers_count.desc()
-                            ).paginate(page=page, per_page=5)
-    
     return render_template('home.html', users=users, tweets=tweets)
 
+
+# #grab user hashtags
+# users_with_hashtags = []
+# for user in result.all():
+#     current_user = {
+#         "name": user.screen_name,
+#         "hashtags": []
+#     }
+#     # print(f"-- User: {user.screen_name}")
+#     for tweet in user.tweets:
+#         # print(f"- Tweet: {tweet.tweet_text}")
+#         for hashtag in tweet.hashtags:
+#             current_user["hashtags"].append(hashtag)
+#             # print(f"Hashtag: {hashtag.hashtag}")
+
+#     users_with_hashtags.append(current_user)
+
+# print(len(users_with_hashtags))
 
 @app.route("/maps", methods=['GET', 'POST'])
 def trends():
