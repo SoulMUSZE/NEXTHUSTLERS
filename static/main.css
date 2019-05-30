@@ -33,8 +33,9 @@
 }
 
 /* Progress Bar */
-.progress {
+.progress.custom-progress {
     margin-bottom: 1rem;
+    height: 2rem;
 }
 
 
@@ -46,3 +47,34 @@ tbody tr:hover {
 .nav-link{
     color:black
 }
+
+/* Home */
+.title.custom-title{
+    text-align: center; 
+    font-family: 'Montserrat', sans-serif; 
+    font-weight:bold;
+}
+
+.header.custom-header.special-header{
+    font-size:20px;
+    font-family: 'Raleway', sans-serif; 
+    font-weight:bold;
+    text-align: center;
+    color:black;
+}
+
+.user-info.custom-user-info{
+    font-size:20px !important;
+    font-family: 'Lato', sans-serif!important;
+}
+
+
+/* override material */
+#filter-form span.bmd-form-group {
+    padding: 0;
+}
+
+#filter-form span.bmd-form-group select {
+    width: 200px;
+}
+
