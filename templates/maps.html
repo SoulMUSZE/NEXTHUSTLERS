@@ -8,6 +8,10 @@
 
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    
+    <!-- CUSTOM CSS -->
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='map.css') }}">
+    
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <style>
@@ -15,7 +19,7 @@
        * element that contains the map. */
         #map {
             height: 100%;
-            width: 80%;
+            width: 100%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -79,8 +83,6 @@
 
 <body>
 
-    <!-- <h4 class=" text-center" style="font-family: 'Montserrat', sans-serif; font-weight: bold">HASHMAPS</h4> -->
-
     <div style="display: none">
         <input id="pac-input" class="controls" type="text" placeholder="Enter a location">
     </div>
@@ -114,7 +116,10 @@
 
             var map = new google.maps.Map(
                 document.getElementById('map'),
-                { center: { lat: 3.1390, lng: 101.6869 }, zoom: 13 });
+                { center: { lat: 3.1390, lng: 101.6869 }, zoom: 5 });
+
+            
+            
 
             var input = document.getElementById('pac-input');
 
@@ -140,9 +145,31 @@
                 console.log(infowindowContent)
             });
 
+            // FIELD FOCUS ON MOUSEOVER
+            map.addListener('mouseover', function() {
+                document.getElementById('pac-input').focus()
+            })
 
+            // FIELD FOCUS ON KEYDOWN
+            window.addEventListener('keydown', function(){
+                let field = document.getElementById('pac-input')
+                
+                field.focus()
+            })
 
+            function initialize() {
 
+                var options = {
+                 types: ['(cities)'],
+                 componentRestrictions: {country: "us"}
+                };
+               
+                var input = document.getElementById('searchTextField');
+                var autocomplete = new google.maps.places.Autocomplete(input, options);
+               }
+               
+            
+            
             autocomplete.addListener('place_changed', function () {
 
                 infowindow.close();
@@ -205,7 +232,7 @@
                         return;
                     }
 
-                    map.setZoom(15);
+                    map.setZoom(8);
                     map.setCenter(results[0].geometry.location);
 
                     // Set the position of the marker using the place ID and location.
@@ -254,8 +281,12 @@
 
         }
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&callback=initMap" async
+    <script src="https://maps.googleapis.com/maps/api/js?key={{API_KEY}}&libraries=places&types=(cities)&callback=initMap" async
         defer></script>
+
+        
+
+
 </body>
 
 </html>
@@ -459,5 +490,7 @@
 </body>
 
 </html> -->
+
+
 
 {% endblock %}

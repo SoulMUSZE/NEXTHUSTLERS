@@ -1,0 +1,30 @@
+/* Map type switch */
+.gmnoprint {
+    display: none
+}
+
+/* Full-Screen button */
+.gm-control-active.gm-fullscreen-control {
+    display: none
+}
+
+
+
+#pac-input {
+    position: absolute!important;
+    margin: auto!important;
+    left: 35vw!important;
+    top: 60vh!important;
+    transform: scale(2.2)!important;
+}
+
+.pac-container {
+    margin-top: 45px!important;
+    left: auto;
+}
+
+.pac-container .pac-icon {
+    width: 0;
+    background-image: none;
+    display: none;
+  }
