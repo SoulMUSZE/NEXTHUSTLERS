@@ -34,149 +34,197 @@
       {% endif %}
     </div>
 
-    <hr />
-  </div>
+    <!-- Get user ID from Checkbox -->
 
 
+    <table class="table">
+      <thead>
+        <tr>
+          <!-- <th scope="col">#</th> -->
+          <th class="text-center text-dark" scope="col"></th>
+          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
+            scope="col">
+            Username
+          </th>
+          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
+            scope="col">
+            Profile Photo</th>
+          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
+            scope="col">
+            Followers
+          </th>
+          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
+            scope="col">
+            Following
+          </th>
+          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
+            scope="col">
+            Location
+          </th>
+          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
+            scope="col">
+            Hashtags
+          </th>
 
-  <table class="table">
-    <thead>
-      <tr>
-        <!-- <th scope="col">#</th> -->
-        <th class="text-center text-dark" scope="col"></th>
-        <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-          scope="col">
-          Username
-        </th>
-        <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-          scope="col">
-          Profile Photo</th>
-        <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-          scope="col">
-          Followers
-        </th>
-        <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-          scope="col">
-          Following
-        </th>
-        <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-          scope="col">
-          Location
-        </th>
-        <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-          scope="col">
-          Hashtags
-        </th>
+          <!-- <th class="text-center" scope="col">Hashtag</th> -->
+          <!-- <th scope="col">Handle</th> -->
+        </tr>
+      </thead>
 
-        <!-- <th class="text-center" scope="col">Hashtag</th> -->
-        <!-- <th scope="col">Handle</th> -->
-      </tr>
-    </thead>
+      <tbody>
+        {% for user in users.items %}
+        <tr class="text-center text-dark">
+          <td>
+            <div>
+              <label><input type="checkbox" value=""></label>
+            </div>
+          </td>
 
-    <tbody>
-      {% for user in users.items %}
-      <tr class="text-center text-dark">
-        <td>
-          <div>
-            <label><input type="checkbox" value=""></label>
-          </div>
-        </td>
+          <td> <a class="text-info" style="font-size:20px;font-family: 'Lato', sans-serif;"
+              href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
+          <!-- Profile Photo Check/Display-->
+          {% if user.profile_image_url %}
+          <td class="text-center "> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank"><img
+                class="rounded-circle" style="height:100px;" src="{{ user.profile_image_url }}"></a></td>
+          {% else %}
+          <td class="text-center">
+            <p>n/a</p>
+          </td>
+          {% endif%}
 
-        <td> <a class="text-info" style="font-size:20px;font-family: 'Lato', sans-serif;"
-            href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
-        <!-- Profile Photo Check/Display-->
-        {% if user.profile_image_url %}
-        <td class="text-center "> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank"><img
-              class="rounded-circle" style="height:100px;" src="{{ user.profile_image_url }}"></a></td>
-        {% else %}
-        <td class="text-center">
-          <p>n/a</p>
-        </td>
-        {% endif%}
-
-        <td style="font-size:20px;font-family: 'Lato', sans-serif;">{{ user.followers_count}}</td>
-        <td style="font-size:20px;font-family: 'Lato', sans-serif;">{{ user.friends_count}}</td>
-        <td style="font-size:20px;font-family: 'Lato', sans-serif;"> {{ user.location }}</td>
+          <td style="font-size:20px;font-family: 'Lato', sans-serif;">{{ user.followers_count}}</td>
+          <td style="font-size:20px;font-family: 'Lato', sans-serif;">{{ user.friends_count}}</td>
+          <td style="font-size:20px;font-family: 'Lato', sans-serif;"> {{ user.location }}</td>
 
 
-        <td>
-          <ul>
-            {% set tags = [] %}
-            {% for tweet in user.tweets %}
-            {% for hashtag in tweet.hashtags %}
-            {% if tags.append(hashtag.hashtag) %}{% endif %}
-            {% endfor %}
-            {% endfor %}
+          <td>
+            <ul>
+              {% set tags = [] %}
+              {% for tweet in user.tweets %}
+              {% for hashtag in tweet.hashtags %}
+              {% if tags.append(hashtag.hashtag) %}{% endif %}
+              {% endfor %}
+              {% endfor %}
 
-            {% set frequency = [] %}
-            {% for tag in tags %}
-            {% if frequency.append(tags.count(tag)) %}{% endif %}
-            {% endfor %}
+              {% set frequency = [] %}
+              {% for tag in tags %}
+              {% if frequency.append(tags.count(tag)) %}{% endif %}
+              {% endfor %}
 
-            <!-- {{frequency}}
+              <!-- {{frequency}}
             {{ frequency | max }} -->
 
 
 
-            {% if tags %}
-            <div class="container">
-              <div class="row">
-                <div class="col-3">
-                  <h6>Hashtags</h6>
-                </div>
-                <div class="col-9">
-                  <h6>Frequency</h6>
-                </div>
-              </div>
-              {% for tag in tags %}
-              {% if loop.index <=5 %}
-              <div class="row">
-                <div class="col-5">
-                  <label for="keyword">#{{tag}}</label>
-                </div>
-                <div class="col-7">
-                  <div class="progress" style="height: 2rem;">
-                    <div class="progress-bar bg-primary" role="progressbar"
-                      style="width: {{ tags.count(tag)/13 * 100 }}%" aria-valuemin="0" aria-valuemax="100">
-                      {{tags.count(tag)}}</div>
+              {% if tags %}
+              <div class="container">
+                <div class="row">
+                  <div class="col-3">
+                    <h6>Hashtags</h6>
+                  </div>
+                  <div class="col-9">
+                    <h6>Frequency</h6>
                   </div>
                 </div>
+                {% for tag in tags %}
+                {% if loop.index <=5 %}
+                <div class="row">
+                  <div class="col-5">
+                    <label for="keyword">#{{tag}}</label>
+                  </div>
+                  <div class="col-7">
+                    <div class="progress" style="height: 2rem;">
+                      <div class="progress-bar bg-primary" role="progressbar"
+                        style="width: {{ tags.count(tag)/13 * 100 }}%" aria-valuemin="0" aria-valuemax="100">
+                        {{tags.count(tag)}}</div>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+                {% endfor %}
               </div>
+
               {% endif %}
-              {% endfor %}
-            </div>
 
-            {% endif %}
+            </ul>
+          </td>
 
-          </ul>
-        </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-        <!-- <td> {{ user.hashtag_name }}</td> -->
-
-      </tr>
+    <div class=text-center>
+      <p>Total results: {{ users.total }} </p>
+      {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+      {% if page_num %}
+      {% if users.page == page_num %}
+      <a class="btn btn-secondary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }} </a>
+      {% else %}
+      <a class="btn btn-outline-secondary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+      {% endif %}
+      {% else %}
+      ...
+      {% endif %}
       {% endfor %}
-    </tbody>
-  </table>
+    </div>
 
-  <div class=text-center>
-    <p>Total results: {{ users.total }} </p>
-    {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-    {% if page_num %}
-    {% if users.page == page_num %}
-    <a class="btn btn-secondary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }} </a>
-    {% else %}
-    <a class="btn btn-outline-secondary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
-    {% endif %}
-    {% else %}
-    ...
-    {% endif %}
-    {% endfor %}
+    <div>
+      <a href="" onclick="getValue();exportCSV()"><button class="save_to_csv_btn" id="save_to_csv_btn">Save to
+          CSV</button></a>
+    </div>
+
+
   </div>
 
-  <div>
-    <button class="save_to_csv_btn">Save to CSV</button>
-  </div>
+  <script>
 
-</div>
+    document.getElementById("save_to_csv_btn").addEventListener("click", function (event) {
+      event.preventDefault()
+    });
 
-{% endblock %}
+    function getValue() {
+      let selectedUsers = []
+      const checkbox_array = document.getElementsByClassName('checkbox');
+
+      console.log(checkbox_array)
+
+      for (i = 0; i < checkbox_array.length; i++) {
+        if (checkbox_array[i].checked === true) {
+          let val = checkbox_array[i].value
+          console.log(val)
+          val = val.replace(/[()' ]/g, "").split(",")
+
+          selectedUsers.push({
+            username: val[0],
+            full_name: val[1],
+            followers_count: val[2],
+            friends_count: val[3],
+            profile_created_at: val[4].replace('datetime.datetime', ""),
+            protected: val[5]
+
+          })
+        }
+      }
+      console.log(selectedUsers)
+      // return selectedUsers
+
+      // exportCSV(selectedUsers)
+    }
+
+
+    function checkBox(e) {
+      const clickedCheckbox = e.target.parentNode.querySelector('.checkbox')
+      clickedCheckbox.checked = !clickedCheckbox.checked
+    }
+
+    function exportCSV() {
+      const data = array.map(row => ({
+
+      }))
+      const csvData = objectToCsv(array)
+    }
+
+  </script>
+
+  {% endblock %}

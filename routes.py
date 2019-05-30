@@ -16,6 +16,10 @@ from flask_wtf import FlaskForm
 
 from keyword_api_client import RestClient
 
+# import io
+# import csv
+# from flask import Response
+
 # def autocomplete():
 #     data = Locations.query.filter(Locations.name.ilike(request.form.get('keyword')))
 #     return jsonify({data: data})
