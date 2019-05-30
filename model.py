@@ -64,7 +64,7 @@ class HashtagUsage(BaseModel):
     __tablename__ = 'hashtag_usage'
     __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)
-    tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.id'), nullable=False)
+    tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.tweet_id'), nullable=False)
     hashtag = db.Column(db.String(30), nullable=False)
     # hashtag_id = db.Column(db.Integer, db.ForeignKey('hashtag.id'), nullable=False)
    
