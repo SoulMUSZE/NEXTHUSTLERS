@@ -188,16 +188,49 @@
       event.preventDefault()
     });
 
-    function getValue() {
-      let selectedUsers = []
-      const checkbox_array = document.getElementsByClassName('checkbox');
+    // FORMAT DATA FROM CHECKBOXES
+    const objectToCsv = function(selectedUsers) {
+      const csvRows = [];
+      
+      // get the headers
+      const headers = Object.keys(selectedUsers[0]);
+      csvRows.push(headers.join(','));
+      //console.log(csvRows);
 
-      console.log(checkbox_array)
+      // loop over the rows
+      for (const row of selectedUsers) {
+        const values = headers.map(header => {
+
+          // form escaped comma separated values
+          const escaped = (''+row[header]).replace(/"/g, '\\"');
+          return `"${escaped}"`;
+        });
+        csvRows.push(values.join(','));
+      }
+      return csvRows.join('\n');
+    };
+      
+    // DOWNLOAD CSV
+    const download = function(selectedUsers) {
+      const blob = new Blob([selectedUsers], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('hidden', '');
+      a.setAttribute('href', url);
+      a.setAttribute('download', 'selected_users.csv');
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild();
+    };
+
+     // GET VALUE FROM SELECTED CHECKBOXES
+    function getValue() {
+      const selectedUsers = []
+      const checkbox_array = document.getElementsByClassName('checkbox');
 
       for (i = 0; i < checkbox_array.length; i++) {
         if (checkbox_array[i].checked === true) {
           let val = checkbox_array[i].value
-          console.log(val)
           val = val.replace(/[()' ]/g, "").split(",")
 
           selectedUsers.push({
@@ -206,24 +239,24 @@
             followers_count: val[2],
             friends_count: val[3],
             profile_created_at: val[4].replace('datetime.datetime', ""),
-            protected: val[5]
+            //protected: val[5]
 
           })
         }
       }
-      console.log(selectedUsers)
-      // return selectedUsers
+      const csvData = objectToCsv(selectedUsers);
+      download(csvData);
+    };
+      
 
-      // exportCSV(selectedUsers)
-    }
 
-
+    // CHECKBOX TOGGLE
     function checkBox(e) {
       const clickedCheckbox = e.target.parentNode.querySelector('.checkbox')
       clickedCheckbox.checked = !clickedCheckbox.checked
     }
 
-
   </script>
 
   {% endblock %}
+      
