@@ -68,6 +68,7 @@ def index():
 
     if seedWord:
         
+        #get related keywords from SEO API
         key_list = get_related_keywords(seedWord)
 
         if key_list:
@@ -79,8 +80,44 @@ def index():
             related_keywords = list(set(flattened_key_list))
 
         else:
-            related keywords = [seedWord]
-         
+            related_keywords = [seedWord]
+
+    
+        # #grab user hashtags
+        # users_with_hashtags = []
+        # for user in result.all():
+        #     current_user = {
+        #         "name": user.screen_name,
+        #         "hashtags": []
+        #     }
+        #     # print(f"-- User: {user.screen_name}")
+        #     for tweet in user.tweets:
+        #         # print(f"- Tweet: {tweet.tweet_text}")
+        #         for hashtag in tweet.hashtags:
+        #             current_user["hashtags"].append(hashtag)
+        #             # print(f"Hashtag: {hashtag.hashtag}")
+            
+        #     users_with_hashtags.append(current_user)
+
+        # print(len(users_with_hashtags))
+
+        for user in result.all():
+            
+            user_hashtags = []
+            
+            for tweet in user.tweets:
+                 for hashtag in tweet.hashtags:
+                     user_hashtags.append(hashtag.hashtag)
+            
+            # compare user_hashtags with related_keywords
+            pass
+
+            # save similarity score to DB 
+            save_user = User(similarity = similarity_score)
+            db.session.add(save_user) 
+            db.session.commit()
+
+        
 
         
 
