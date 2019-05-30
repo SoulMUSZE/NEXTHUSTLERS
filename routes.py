@@ -57,6 +57,13 @@ def index():
     users = result.order_by(User.followers_count.desc()
                             ).paginate(page=page, per_page=5)
 
+    # breakpoint()
+    # for user in result:
+    #     for tweet in user.tweets:
+    #         for hashtag in tweet.hashtags:
+    #             print(hashtag)
+
+    
     return render_template('home.html', users=users, tweets=tweets)
 
 
@@ -123,11 +130,12 @@ def keywords():
 
     if request.method == 'POST':
 
+        seedWord = request.form.get("seedWord")
+        
         client = RestClient(SEO_LOGIN, SEO_PASSWORD)
 
         # you can set as "index of post_data" your ID, string, etc. we will return it with all results.
         # rnd = Random()
-        seedWord = request.form.get("seedWord")
 
         post_data = dict()
         # post_data[random.randint(1, 30000000)] = dict(
