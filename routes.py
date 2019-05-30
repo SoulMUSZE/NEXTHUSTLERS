@@ -16,6 +16,10 @@ from flask_wtf import FlaskForm
 
 from keyword_api_client import RestClient
 
+# import io
+# import csv
+# from flask import Response
+
 # def autocomplete():
 #     data = Locations.query.filter(Locations.name.ilike(request.form.get('keyword')))
 #     return jsonify({data: data})
@@ -194,3 +198,23 @@ def keywords():
 
     # handle GET request
     return render_template('keywords.html')
+
+
+
+# @app.route('/export')
+# def export():
+#     # results = generate_file_data()
+#     # generator = (cell for row in results for cell in row)
+
+#     # return Response(generator,
+#     #                     mimetype="text/plain",
+#     #                     headers={"Content-Disposition":
+#     #                         "attachment;filename=text.txt"})
+    
+#     si = io.StringIO()
+#     cw = csv.writer(si)
+#     cw.writerows(csvList)
+#     output = make_response(si.getvalue())
+#     output.headers["Content-Disposition"] = "attachment; filename=export.csv"
+#     output.headers["Content-type"] = "text/csv"
+#     return output

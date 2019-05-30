@@ -47,9 +47,9 @@ class User(BaseModel):
     profile_created_at = db.Column(db.DateTime, index=True)
     protected = db.Column(db.Boolean, default=False) 
     profile_image_url = db.Column(db.String(20), nullable=True, default="")
+    similarity = db.Column(db.Float, nullable=True, default=0)
     tweets = db.relationship('Tweet', backref='user', lazy='dynamic')
     # hashtag_used = db.relationship('Hashtag', secondary=hashtag_usage, backref=db.backref('hashtag_users', lazy='dynamic'))
-   
 
 class Tweet(BaseModel):
     __tablename__ = 'tweet'
@@ -64,7 +64,8 @@ class HashtagUsage(BaseModel):
     __tablename__ = 'hashtag_usage'
     __table_args__ = {'extend_existing': True} 
     id = db.Column(db.Integer, primary_key=True)
-    tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.id'), nullable=False)
+    tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.tweet_id'), nullable=False)
+    # tweet_id = db.Column(db.Integer, db.ForeignKey('tweet.id'), nullable=False)
     hashtag = db.Column(db.String(30), nullable=False)
     # hashtag_id = db.Column(db.Integer, db.ForeignKey('hashtag.id'), nullable=False)
    

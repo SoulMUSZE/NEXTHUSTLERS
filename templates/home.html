@@ -1,5 +1,7 @@
 {% extends "_layout.html" %}
 
+
+
 {% block content%}
     <div class="container">
         <div class="mt-3">
@@ -56,10 +58,14 @@
                 
                 <tbody>
                 {% for user in users.items %}
-                  <tr class="text-center">
-                    <td><div class="checkbox">
-                        <label><input type="checkbox" value=""></label>
-                      </div></td>
+                  <tr class="text-center" onclick=checkBox(event)>
+                    
+                    <td>
+                      <div id="{{ user.id }}" >
+                        <label><input onclick=checkBox(event) class="checkbox" type="checkbox" value="{{ user.screen_name,user.full_name,user.followers_count,user.friends_count,user.profile_created_at,user.protected }}"></label>
+                    
+                      </div>
+                    </td>
 
                     <td> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
                       <!-- Profile Photo Check/Display-->
@@ -95,10 +101,77 @@
         </div>
 
         <div>
-          <button class="save_to_csv_btn">Save to CSV</button>
+          <a href="" onclick="getValue();exportCSV()"><button class="save_to_csv_btn" id="save_to_csv_btn">Save to CSV</button></a>
         </div>
     
     </div>
 
+    <!-- Get user ID from Checkbox -->
+    <script>
+     
+
+      
+      document.getElementById("save_to_csv_btn").addEventListener("click", function(event){
+        event.preventDefault()
+      });
+      
+      function getValue() {
+        let selectedUsers = []
+        const checkbox_array = document.getElementsByClassName('checkbox');
+        
+        console.log(checkbox_array)
+        
+        for (i = 0; i < checkbox_array.length; i++) {
+          if ( checkbox_array[i].checked === true ) {
+            let val = checkbox_array[i].value
+            console.log(val)
+            val = val.replace(/[()' ]/g,"").split(",")
+
+            selectedUsers.push({
+              username: val[0],
+              full_name: val[1],
+              followers_count: val[2],
+              friends_count: val[3],
+              profile_created_at: val[4].replace('datetime.datetime',""),
+              protected: val[5]
+              
+            })        
+          }
+        }
+        console.log(selectedUsers)
+        // return selectedUsers
+
+        // exportCSV(selectedUsers)
+      }
+
+
+      function checkBox(e) {
+        const clickedCheckbox = e.target.parentNode.querySelector('.checkbox')
+        clickedCheckbox.checked = !clickedCheckbox.checked
+      }
+
+      function exportCSV() {
+        const data = array.map(row => ({
+
+        }))
+        const csvData = objectToCsv(array)
+      }
+
+    </script>
 {% endblock %}
           
+<--
+/**
+function exportCSV() {
+  let csvContent = "data:text/csv;charset=utf-8,"
+  + array.map(e => e.join(",")).join("\n");  
+
+  let encodeUri = encodeURI(csvContent);
+  window.open(encodeUri);
+}
+**/
+-->
+
+
+   val = val.replace("(","")
+            val = val.replace(")","")

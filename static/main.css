@@ -1,6 +1,7 @@
+/* Save to CSV Button */
 .save_to_csv_btn {
     transition: all 0.2s ease-in-out;
-    position: absolute;
+    position: fixed;
     line-height: normal;
     font-family: Roboto;
     right: 0px;
@@ -32,6 +33,13 @@
     outline: none;
 }
 
+/* Progress Bar */
 .progress {
     margin-bottom: 1rem;
+}
+
+
+/* Other */
+tbody tr:hover {
+    background-color: #f7f7f7
 }
