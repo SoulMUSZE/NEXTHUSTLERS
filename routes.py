@@ -127,7 +127,7 @@ def index():
                 user.similarity = response["similarity_score"]
                 db.session.commit()
 
-        users = result.filter(selected_users).order_by(User.similarity.desc()).paginate(page=page, per_page=5)
+        users = result.filter(User.screen_name.in_(selected_usernames)).order_by(User.similarity.desc()).paginate(page=page, per_page=5)
 
         return render_template('home.html', users=users, tweets=tweets)
 
