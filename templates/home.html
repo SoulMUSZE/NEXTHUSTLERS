@@ -16,6 +16,20 @@
           
         </div>
         
+        &NonBreakingSpace;
+        &NonBreakingSpace;
+        &NonBreakingSpace;
+
+        <!-- input field for hashtags -->
+        <div>
+          <label class="sr-only" for="inlineFormInputName2">Name</label>
+          <input name="seedWord" type="text" class="form-control" id="inlineFormInputName2" placeholder="Product Name">
+        </div>
+
+        &NonBreakingSpace;
+        &NonBreakingSpace;
+        &NonBreakingSpace;
+
         <div>
           <label class="sr-only" for="inlineFormInputName2">Name</label>
           <input name="city" type="text" class="form-control" id="inlineFormInputName2" placeholder="City">
@@ -30,18 +44,29 @@
           </option>
           <option value="3"> 81 - 100</option>
           <option value="4"> >100 </option>
-        </select> <button type="submit" class="btn btn-dark ml-2">
-          Search</button>
+        </select>
+
+        <button type="submit" class="btn btn-dark ml-2" onclick="loading();">Search</button>
+
         <a href="{url_for('index')}"><button class="btn btn-danger ml-2">Reset Filters</button></a>
       </form>
     </div>
-    <div class="text-center">
-      {% if request.args.get('city') %}
-      <p><small>Results for {{ request.args.get('city') }} {{ request.args.get('followers') }}</small></p>
+
+    <div id='form-argument' class="text-center">
+      {% if request.args.get('city') or request.args.get('seedWord') %}
+      <p>
+        <small>
+          Results for
+          "{{ request.args.get('seedWord') }}{{ request.args.get('city') }}{{ request.args.get('followers') }}"
+        </small>
+      </p>
       {% else %}
       <p><small class="d-none">Pick a city</small></p>
       {% endif %}
     </div>
+
+    <!-- SPINNER -->
+    <div id="loading"></div>
 
     <!-- Get user ID from Checkbox -->
 
@@ -65,7 +90,6 @@
 
       <tbody>
         {% for user in users.items %}
-
         <!-- Modal -->
         <div class="modal fade" id="user-modal-{{user.id}}" tabindex="-1" role="dialog"
           aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -177,7 +201,7 @@
       </tbody>
     </table>
 
-    <div class=text-center>
+    <div id="footer" class=text-center>
       <p>Total results: {{ users.total }} </p>
       {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
       {% if page_num %}
@@ -207,9 +231,9 @@
     });
 
     // FORMAT DATA FROM CHECKBOXES
-    const objectToCsv = function(selectedUsers) {
+    const objectToCsv = function (selectedUsers) {
       const csvRows = [];
-      
+
       // get the headers
       const headers = Object.keys(selectedUsers[0]);
       csvRows.push(headers.join(','));
@@ -220,16 +244,16 @@
         const values = headers.map(header => {
 
           // form escaped comma separated values
-          const escaped = (''+row[header]).replace(/"/g, '\\"');
+          const escaped = ('' + row[header]).replace(/"/g, '\\"');
           return `"${escaped}"`;
         });
         csvRows.push(values.join(','));
       }
       return csvRows.join('\n');
     };
-      
+
     // DOWNLOAD CSV
-    const download = function(selectedUsers) {
+    const download = function (selectedUsers) {
       const blob = new Blob([selectedUsers], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -241,7 +265,7 @@
       document.body.removeChild();
     };
 
-     // GET VALUE FROM SELECTED CHECKBOXES
+    // GET VALUE FROM SELECTED CHECKBOXES
     function getValue() {
       const selectedUsers = []
       const checkbox_array = document.getElementsByClassName('checkbox');
@@ -265,7 +289,7 @@
       const csvData = objectToCsv(selectedUsers);
       download(csvData);
     };
-      
+
 
 
     // CHECKBOX TOGGLE
@@ -279,5 +303,15 @@
 
   </script>
 
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script type="text/javascript">
+    function loading() {
+      $("#loading").show();
+      $("#form-argument").hide();
+      $(".table").hide();
+      $("#footer").hide();
+    }
+  </script>
+
   {% endblock %}
-      
