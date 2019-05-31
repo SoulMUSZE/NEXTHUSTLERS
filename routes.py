@@ -48,6 +48,12 @@ def index():
     result = User.query
     tweets = Tweet.query
 
+    usernameExist = request.args.get('selectedUsers')
+    if usernameExist:
+        selected_usernames = json.loads(usernameExist)
+    
+    # breakpoint()
+
     # Filter / Verified Accounts
     if verified:
         result = result.filter (User.verified)
@@ -75,8 +81,9 @@ def index():
                             ).paginate(page=page, per_page=5)
 
     '''
-        HANDLE HASHTAGS
-        '''
+    HANDLE HASHTAGS
+    '''
+    
     if seedWord:
 
         # get related keywords from SEO API
@@ -94,8 +101,14 @@ def index():
         else:
             related_keywords = [seedWord]
         
-        for user in result.all():
+        
 
+        # for user in result.all():
+        selected_users = []
+        for username in selected_usernames:
+
+            user = User.query.filter_by(screen_name = username).first()
+            selected_users.append(user)
             # get user hashtags
             user_hashtags = []
             for tweet in user.tweets:
@@ -114,7 +127,7 @@ def index():
                 user.similarity = response["similarity_score"]
                 db.session.commit()
 
-        users = result.order_by(User.similarity.desc()).paginate(page=page, per_page=5)
+        users = result.filter(selected_users).order_by(User.similarity.desc()).paginate(page=page, per_page=5)
 
         return render_template('home.html', users=users, tweets=tweets)
 
