@@ -62,16 +62,17 @@
         <!-- Modal -->
         <div class="modal fade" id="user-modal-{{user.id}}" tabindex="-1" role="dialog"
           aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:90vw; " role="document">
             <div class="modal-content" style="max-height: 90vh; overflow-y: scroll;">
               <div class="modal-header">
                 <!-- <h5 class="modal-title"> -->
                 <!-- <div class="row"> -->
-                <div class="col-3">
-                  <h4>Hashtags</h4>
+                <div class="col-3 ml-5">
+                  <h4 class="header custom-header special-header text-left" style="font-size:30px;"><u>Hashtags</u></h4>
                 </div>
-                <div class="col-8">
-                  <h4 class="text-center">Frequency</h4><br />
+                <div class="col-6 ml-2">
+                  <h4 class="header custom-header special-header text-center" style="font-size:30px;"><u>Tweets</u></h4>
+                  <br />
                 </div>
                 <!-- </div> -->
                 <!-- </h5> -->
@@ -80,6 +81,7 @@
                 </button>
               </div>
               <ul class="pr-3 pl-3 pb-3">
+
                 {% set tags = [] %}
                 {% for tweet in user.tweets %}
                 {% for hashtag in tweet.hashtags %}
@@ -92,35 +94,51 @@
                 {% if frequency.append(tags.count(tag)) %}{% endif %}
                 {% endfor %}
 
+                {% set finaltweets = [] %}
+                {% for text in user.tweets %}
+                {% if finaltweets.append(text.tweet_text) %}{% endif %}
+                {% endfor %}
+
+
+
                 <!-- {{frequency}}
                         {{ frequency | max }} -->
 
 
 
-                {% if tags %}
 
                 <div class="container">
 
-                  {% for tag in tags %}
 
                   <div class="row">
-                    <div class="col-5">
+
+                    <div class="col-6">
+                      {% if tags %}
+                      {% for tag in tags %}
                       <a class="user-info custom-user-info text-info" target="blank"
                         href="https://twitter.com/hashtag/{{tag}}" for="keyword">#{{tag}}</a>
-                    </div>
-                    <div class="col-7">
+
                       <div class="progress custom-progress">
                         <div class="progress-bar bg-info" role="progressbar"
                           style="width: {{ tags.count(tag)/13 * 100 }}%" aria-valuemin="0" aria-valuemax="100">
                           {{tags.count(tag)}}</div>
                       </div>
+                      {% endfor %}
+                      {% endif %}
                     </div>
+
+
+
+                    <div class="col-6">
+                      {% for finaltweet in finaltweets %}
+                      <div class="user-info custom-user-info">{{finaltweet}}</div><br />
+                      {% endfor %}
+                    </div>
+
                   </div>
 
-                  {% endfor %}
                 </div>
 
-                {% endif %}
 
               </ul>
             </div>
@@ -128,7 +146,7 @@
         </div>
         <!-- end modal -->
 
-        <tr class="text-center text-dark" onclick=checkBox(event)>
+        <tr class=" text-center text-dark" onclick=checkBox(event)>
 
           <td>
             <div id="{{ user.id }}">
@@ -141,7 +159,8 @@
 
 
           <td> <a class="user-info custom-user-info text-info" href="https://twitter.com/{{ user.screen_name }}"
-              target="_blank">{{ user.screen_name }} </a></td>
+              target="_blank">{{ user.screen_name }}
+            </a></td>
           <!-- Profile Photo Check/Display-->
           {% if user.profile_image_url %}
           <td class="text-center "> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank"><img
@@ -200,9 +219,9 @@
     });
 
     // FORMAT DATA FROM CHECKBOXES
-    const objectToCsv = function(selectedUsers) {
+    const objectToCsv = function (selectedUsers) {
       const csvRows = [];
-      
+
       // get the headers
       const headers = Object.keys(selectedUsers[0]);
       csvRows.push(headers.join(','));
@@ -213,16 +232,16 @@
         const values = headers.map(header => {
 
           // form escaped comma separated values
-          const escaped = (''+row[header]).replace(/"/g, '\\"');
+          const escaped = ('' + row[header]).replace(/"/g, '\\"');
           return `"${escaped}"`;
         });
         csvRows.push(values.join(','));
       }
       return csvRows.join('\n');
     };
-      
+
     // DOWNLOAD CSV
-    const download = function(selectedUsers) {
+    const download = function (selectedUsers) {
       const blob = new Blob([selectedUsers], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -234,7 +253,7 @@
       document.body.removeChild();
     };
 
-     // GET VALUE FROM SELECTED CHECKBOXES
+    // GET VALUE FROM SELECTED CHECKBOXES
     function getValue() {
       const selectedUsers = []
       const checkbox_array = document.getElementsByClassName('checkbox');
@@ -258,7 +277,7 @@
       const csvData = objectToCsv(selectedUsers);
       download(csvData);
     };
-      
+
 
 
     // CHECKBOX TOGGLE
@@ -273,4 +292,3 @@
   </script>
 
   {% endblock %}
-      
