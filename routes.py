@@ -21,13 +21,13 @@ from keyword_api_client import RestClient, get_related_keywords
 
 paralleldots.set_api_key(PARALLELDOTS_API_KEY)
 
-
-@app.route("/", methods=['GET'])
+@app.route("/lp", methods=['GET'])
 def intro():
-
+    
     return render_template('intro.html')
 
 
+@app.route("/", methods=['GET'])
 @app.route("/home", methods=['GET'])
 def index():
 
@@ -122,7 +122,6 @@ def index():
                 text2 = ' '.join(user_hashtags)
                 response = paralleldots.similarity(text1, text2)
            
-                breakpoint()
                 # save similarity score to DB
                 user.similarity = response["similarity_score"]
                 db.session.commit()
@@ -240,3 +239,4 @@ def about():
 @app.route("/feedback", methods=['GET', 'POST'])
 def feedback():
     return render_template('feedback.html')
+
