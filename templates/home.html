@@ -5,14 +5,15 @@
 <div class="container">
   <div class="mt-3">
 
-    <h1 class="title custom-title">TWEETFLUENCER</h1><br />
-
+    <h1 class="title custom-title">SEARCH USERS</h1><br />
+    
+    
     <div id="filter-form" class="d-flex justify-content-center mt-3">
       <form class="form-inline" method="get">
         
         <div class="form-check">
-          <label class="form-check-label" for="exampleCheck1">Verified</label>
-          <input name="verified" type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label for="verified-button" class="verified-button" for="exampleCheck1"><img class="verified-badge unchecked" src="{{ url_for('static', filename='images/verified-badge.png') }}"></label>
+          <input id="verified-button" name="verified" type="checkbox" class="form-check-input" id="exampleCheck1">
           
         </div>
         
@@ -37,13 +38,12 @@
 
         <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
 
-        <select name="followers" class="custom-select ml-2" id="inlineFormCustomSelectPref">
+        <select name="followers" class="custom-select ml-2" id="followers-filter-tab">
           <option selected value="">Followers</option>
-          <option value="1">
-            < 50 </option> <option value="2"> 50 - 80
-          </option>
-          <option value="3"> 81 - 100</option>
-          <option value="4"> >100 </option>
+          <option value="1"> Below 1000 </option> 
+          <option value="2"> 1000 - 25 000 </option>
+          <option value="3"> 25 000 - 100 000</option>
+          <option value="4"> More than 100 000 </option>
         </select>
 
         <button type="submit" class="btn btn-dark ml-2" onclick="loading();">Search</button>
@@ -52,44 +52,54 @@
       </form>
     </div>
 
-    <div id='form-argument' class="text-center">
+    <div id='form-argument' class="result-number text-center ">
       {% if request.args.get('city') or request.args.get('seedWord') %}
       <p>
         <small>
-          Results for
+          Total {{ users.total }} for
           "{{ request.args.get('seedWord') }}{{ request.args.get('city') }}{{ request.args.get('followers') }}"
         </small>
       </p>
+      
       {% else %}
-      <p><small class="d-none">Pick a city</small></p>
+      <p><small>Total {{ users.total }} results. </small></p>    
       {% endif %}
     </div>
 
     <!-- SPINNER -->
-    <div id="loading"></div>
+
+    <div class="text-center">
+      <div id="spinner">
+        <div  class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
+
 
     <!-- Get user ID from Checkbox -->
-
-
     <table class="table">
       <thead>
         <tr>
 
           <th class="header custom-header special-header" scope="col"></th>
-          <th class="header custom-header special-header" scope="col">Username</th>
+          <th class="header custom-header special-header text-left" scope="col">Username</th>
           <th class="header custom-header special-header" scope="col">Profile Photo</th>
-          <th class="header custom-header special-header" scope="col">Followers</th>
-          <th class="header custom-header special-header" scope="col">Following</th>
-          <th class="header custom-header special-header" scope="col">Location</th>
+          <th class="header custom-header special-header text-left" scope="col">Followers</th>
+          <th class="header custom-header special-header text-left" scope="col">Following</th>
+          <th class="header custom-header special-header text-right" scope="col">Location</th>
           <th class="header custom-header special-header" scope="col">Hashtags</th>
 
           <!-- <th class="text-center" scope="col">Hashtag</th> -->
           <!-- <th scope="col">Handle</th> -->
         </tr>
+     
+        
       </thead>
 
       <tbody>
         {% for user in users.items %}
+        
         <!-- Modal -->
         <div class="modal fade" id="user-modal-{{user.id}}" tabindex="-1" role="dialog"
           aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -110,23 +120,23 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
+              
               <ul class="pr-3 pl-3 pb-3">
                 {% set tags = [] %}
-                {% for tweet in user.tweets %}
-                {% for hashtag in tweet.hashtags %}
-                {% if tags.append(hashtag.hashtag) %}{% endif %}
-                {% endfor %}
-                {% endfor %}
+                  {% for tweet in user.tweets %}
+                    {% for hashtag in tweet.hashtags %}
+                      {% if tags.append(hashtag.hashtag) %}{% endif %}
+                    {% endfor %}
+                  {% endfor %}
 
                 {% set frequency = [] %}
+                
                 {% for tag in tags %}
-                {% if frequency.append(tags.count(tag)) %}{% endif %}
+                  {% if frequency.append(tags.count(tag)) %}{% endif %}
                 {% endfor %}
 
                 <!-- {{frequency}}
                         {{ frequency | max }} -->
-
-
 
                 {% if tags %}
 
@@ -159,9 +169,13 @@
         </div>
         <!-- end modal -->
 
-        <tr class="text-center text-dark" onclick=checkBox(event)>
 
-          <td>
+
+
+      <!-- TABLE DATA STARTS HERE -->
+        <tr class="text-left text-dark" onclick=checkBox(event)>
+
+          <td class="row-align-middle">
             <div id="{{ user.id }}">
               <label><input onclick=checkBox(event) class="checkbox" type="checkbox"
                   value="{{ user.screen_name,user.full_name,user.followers_count,user.friends_count,user.profile_created_at,user.protected }}"></label>
@@ -170,22 +184,39 @@
           </td>
 
 
+          <!-- RESULTS: Users names -->
+          <td class="text-left row-align-middle">
+            {% if user.verified %}
+              <a class="user-info custom-user-info text-info" href="https://twitter.com/{{ user.screen_name }}"
+                target="_blank">{{ user.screen_name }} 
+              </a>
+              <img class="verified-badge" src="{{ url_for('static', filename='images/verified-badge.png') }}">
 
-          <td> <a class="user-info custom-user-info text-info" href="https://twitter.com/{{ user.screen_name }}"
-              target="_blank">{{ user.screen_name }} </a></td>
+            {% else %}
+              <a class="user-info custom-user-info text-info" href="https://twitter.com/{{ user.screen_name }}"
+                target="_blank">{{ user.screen_name }} 
+              </a>
+            {% endif %}
+         
+          </td>
+          
+          
           <!-- Profile Photo Check/Display-->
           {% if user.profile_image_url %}
-          <td class="text-center "> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank"><img
-                class="rounded-circle" src="{{ user.profile_image_url }}"></a></td>
+            <td class="text-center "> 
+              <a href="https://twitter.com/{{ user.screen_name }}" target="_blank">
+                <img class="rounded-circle" src="{{ user.profile_image_url }}">
+              </a>
+            </td>
           {% else %}
-          <td class="text-center">
-            <p>n/a</p>
-          </td>
+            <td class="text-center">
+              <p>n/a</p>
+            </td>
           {% endif%}
 
           <td class="user-info custom-user-info">{{ user.followers_count}}</td>
           <td class="user-info custom-user-info">{{ user.friends_count}}</td>
-          <td class="user-info custom-user-info"> {{ user.location }}</td>
+          <td class="user-info custom-user-info text-right"> {{ user.location }}</td>
 
 
           <td>
@@ -194,25 +225,40 @@
               View More Info
             </button>
           </td>
-
         </tr>
 
         {% endfor %}
       </tbody>
     </table>
+      
 
+  <!-- FOOTER -->
+  <!-- <div id='form-argument' class="result-number text-center ">
+      {% if request.args.get('city') or request.args.get('seedWord') %}
+      <p>
+        <small>
+          Total {{ users.total }} for
+          "{{ request.args.get('seedWord') }}{{ request.args.get('city') }}{{ request.args.get('followers') }}"
+        </small>
+      </p>
+      
+      {% else %}
+      <p><small>Total {{ users.total }} results. </small></p>    
+      {% endif %}
+    </div> -->
+    
+    <!-- PAGINATION -->
     <div id="footer" class=text-center>
-      <p>Total results: {{ users.total }} </p>
       {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
-      {% if page_num %}
-      {% if users.page == page_num %}
-      <a class="btn btn-secondary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }} </a>
-      {% else %}
-      <a class="btn btn-outline-secondary mb-4" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
-      {% endif %}
-      {% else %}
-      ...
-      {% endif %}
+        {% if page_num %}
+          {% if users.page == page_num %}
+            <a class="btn mb-4 current-page" href="{{ url_for('index', page=page_num) }}">{{ page_num }} </a>
+          {% else %}
+            <a class="btn mb-4 other-pages" href="{{ url_for('index', page=page_num) }}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+      
+        {% endif %}
       {% endfor %}
     </div>
 
@@ -224,11 +270,15 @@
 
   </div>
 
+
+
+
   <script>
 
     document.getElementById("save_to_csv_btn").addEventListener("click", function (event) {
       event.preventDefault()
     });
+
 
     // FORMAT DATA FROM CHECKBOXES
     const objectToCsv = function (selectedUsers) {
@@ -290,8 +340,6 @@
       download(csvData);
     };
 
-
-
     // CHECKBOX TOGGLE
     function checkBox(e) {
       // do nothing and exit function if click on button
@@ -301,13 +349,29 @@
       clickedCheckbox.checked = !clickedCheckbox.checked
     }
 
+    // VERIFIED BADGE FILTER OPACITY
+    const verifiedCheckBox = document.getElementById('verified-button')
+    const verifiedImage = document.querySelector('.verified-badge')
+
+    verifiedCheckBox.addEventListener('click', toggleVerified)
+
+
+    function toggleVerified(e){
+      if(e.target.checked){
+        verifiedImage.classList.remove('unchecked')
+      } else {
+        verifiedImage.classList.add('unchecked')
+      }
+    }
+
+
   </script>
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
   <script type="text/javascript">
     function loading() {
-      $("#loading").show();
+      $("#spinner").show();
       $("#form-argument").hide();
       $(".table").hide();
       $("#footer").hide();

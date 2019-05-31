@@ -20,23 +20,18 @@ from app import db
 from keyword_api_client import RestClient, get_related_keywords
 
 paralleldots.set_api_key(PARALLELDOTS_API_KEY)
-# import io
-# import csv
-# from flask import Response
 
-# def autocomplete():
-#     data = Locations.query.filter(Locations.name.ilike(request.form.get('keyword')))
-#     return jsonify({data: data})
+from flask_material import Material
 
 
 @app.route("/", methods=['GET'])
 def index():
 
     followersDict = {
-        '1': 50,
-        '2': (50, 80),
-        '3': (81, 100),
-        '4': 101
+        '1': 1000,
+        '2': (1001, 25000),
+        '3': (25001, 100000),
+        '4': 100001
     }
 
     # handle hashtags
@@ -72,7 +67,7 @@ def index():
     page = request.args.get('page', 1, type=int)
 
     users = result.order_by(User.followers_count.desc()
-                            ).paginate(page=page, per_page=5)
+                            ).paginate(page=page, per_page=10)
 
     '''
         HANDLE HASHTAGS
