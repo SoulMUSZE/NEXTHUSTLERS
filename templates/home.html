@@ -4,9 +4,10 @@
 
 <div class="container">
   <div class="mt-3">
-    <h1 style="text-align: center; font-family: 'Montserrat', sans-serif; font-weight:bold;">TWEETFLUENCER</h1><br />
 
-    <div class="d-flex justify-content-center mt-3">
+    <h1 class="title custom-title">TWEETFLUENCER</h1><br />
+
+    <div id="filter-form" class="d-flex justify-content-center mt-3">
       <form class="form-inline" method="get">
         
         <div class="form-check">
@@ -23,14 +24,15 @@
         <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
 
         <select name="followers" class="custom-select ml-2" id="inlineFormCustomSelectPref">
-          <option selected value="">Followers...</option>
+          <option selected value="">Followers</option>
           <option value="1">
             < 50 </option> <option value="2"> 50 - 80
           </option>
           <option value="3"> 81 - 100</option>
-          <option value="4"> 100 < </option> </select> <button type="submit" class="btn btn-dark ml-2">
-              Search</button>
-              <a href="{url_for('index')}"><button class="btn btn-danger ml-2">Reset Filters</button></a>
+          <option value="4"> >100 </option>
+        </select> <button type="submit" class="btn btn-dark ml-2">
+          Search</button>
+        <a href="{url_for('index')}"><button class="btn btn-danger ml-2">Reset Filters</button></a>
       </form>
     </div>
     <div class="text-center">
@@ -47,32 +49,14 @@
     <table class="table">
       <thead>
         <tr>
-          <!-- <th scope="col">#</th> -->
-          <th class="text-center text-dark" scope="col"></th>
-          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-            scope="col">
-            Username
-          </th>
-          
-          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-            scope="col">
-            Profile Photo</th>
-          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-            scope="col">
-            Followers
-          </th>
-          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-            scope="col">
-            Following
-          </th>
-          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-            scope="col">
-            Location
-          </th>
-          <th class="text-center text-dark" style="font-size:20px;font-family: 'Raleway', sans-serif; font-weight:bold;"
-            scope="col">
-            Hashtags
-          </th>
+
+          <th class="header custom-header special-header" scope="col"></th>
+          <th class="header custom-header special-header" scope="col">Username</th>
+          <th class="header custom-header special-header" scope="col">Profile Photo</th>
+          <th class="header custom-header special-header" scope="col">Followers</th>
+          <th class="header custom-header special-header" scope="col">Following</th>
+          <th class="header custom-header special-header" scope="col">Location</th>
+          <th class="header custom-header special-header" scope="col">Hashtags</th>
 
           <!-- <th class="text-center" scope="col">Hashtag</th> -->
           <!-- <th scope="col">Handle</th> -->
@@ -81,8 +65,78 @@
 
       <tbody>
         {% for user in users.items %}
-        <tr class="text-center text-dark" onclick = checkBox(event)>
-         
+
+        <!-- Modal -->
+        <div class="modal fade" id="user-modal-{{user.id}}" tabindex="-1" role="dialog"
+          aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+            <div class="modal-content" style="max-height: 90vh; overflow-y: scroll;">
+              <div class="modal-header">
+                <!-- <h5 class="modal-title"> -->
+                <!-- <div class="row"> -->
+                <div class="col-3">
+                  <h4>Hashtags</h4>
+                </div>
+                <div class="col-8">
+                  <h4 class="text-center">Frequency</h4><br />
+                </div>
+                <!-- </div> -->
+                <!-- </h5> -->
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <ul class="pr-3 pl-3 pb-3">
+                {% set tags = [] %}
+                {% for tweet in user.tweets %}
+                {% for hashtag in tweet.hashtags %}
+                {% if tags.append(hashtag.hashtag) %}{% endif %}
+                {% endfor %}
+                {% endfor %}
+
+                {% set frequency = [] %}
+                {% for tag in tags %}
+                {% if frequency.append(tags.count(tag)) %}{% endif %}
+                {% endfor %}
+
+                <!-- {{frequency}}
+                        {{ frequency | max }} -->
+
+
+
+                {% if tags %}
+
+                <div class="container">
+
+                  {% for tag in tags %}
+
+                  <div class="row">
+                    <div class="col-5">
+                      <a class="user-info custom-user-info text-info" target="blank"
+                        href="https://twitter.com/hashtag/{{tag}}" for="keyword">#{{tag}}</a>
+                    </div>
+                    <div class="col-7">
+                      <div class="progress custom-progress">
+                        <div class="progress-bar bg-info" role="progressbar"
+                          style="width: {{ tags.count(tag)/13 * 100 }}%" aria-valuemin="0" aria-valuemax="100">
+                          {{tags.count(tag)}}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {% endfor %}
+                </div>
+
+                {% endif %}
+
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- end modal -->
+
+        <tr class="text-center text-dark" onclick=checkBox(event)>
+
           <td>
             <div id="{{ user.id }}">
               <label><input onclick=checkBox(event) class="checkbox" type="checkbox"
@@ -93,76 +147,32 @@
 
 
 
-          <td> <a class="text-info" style="font-size:20px;font-family: 'Lato', sans-serif;"
-              href="https://twitter.com/{{ user.screen_name }}" target="_blank">{{ user.screen_name }} </a></td>
+          <td> <a class="user-info custom-user-info text-info" href="https://twitter.com/{{ user.screen_name }}"
+              target="_blank">{{ user.screen_name }} </a></td>
           <!-- Profile Photo Check/Display-->
           {% if user.profile_image_url %}
           <td class="text-center "> <a href="https://twitter.com/{{ user.screen_name }}" target="_blank"><img
-                class="rounded-circle" style="height:100px;" src="{{ user.profile_image_url }}"></a></td>
+                class="rounded-circle" src="{{ user.profile_image_url }}"></a></td>
           {% else %}
           <td class="text-center">
             <p>n/a</p>
           </td>
           {% endif%}
 
-          <td style="font-size:20px;font-family: 'Lato', sans-serif;">{{ user.followers_count}}</td>
-          <td style="font-size:20px;font-family: 'Lato', sans-serif;">{{ user.friends_count}}</td>
-          <td style="font-size:20px;font-family: 'Lato', sans-serif;"> {{ user.location }}</td>
+          <td class="user-info custom-user-info">{{ user.followers_count}}</td>
+          <td class="user-info custom-user-info">{{ user.friends_count}}</td>
+          <td class="user-info custom-user-info"> {{ user.location }}</td>
 
 
           <td>
-            <ul>
-              {% set tags = [] %}
-              {% for tweet in user.tweets %}
-              {% for hashtag in tweet.hashtags %}
-              {% if tags.append(hashtag.hashtag) %}{% endif %}
-              {% endfor %}
-              {% endfor %}
-
-              {% set frequency = [] %}
-              {% for tag in tags %}
-              {% if frequency.append(tags.count(tag)) %}{% endif %}
-              {% endfor %}
-
-              <!-- {{frequency}}
-            {{ frequency | max }} -->
-
-
-
-              {% if tags %}
-              <div class="container">
-                <div class="row">
-                  <div class="col-3">
-                    <h6>Hashtags</h6>
-                  </div>
-                  <div class="col-9">
-                    <h6>Frequency</h6>
-                  </div>
-                </div>
-                {% for tag in tags %}
-                {% if loop.index <=5 %}
-                <div class="row">
-                  <div class="col-5">
-                    <label for="keyword">#{{tag}}</label>
-                  </div>
-                  <div class="col-7">
-                    <div class="progress" style="height: 2rem;">
-                      <div class="progress-bar bg-primary" role="progressbar"
-                        style="width: {{ tags.count(tag)/13 * 100 }}%" aria-valuemin="0" aria-valuemax="100">
-                        {{tags.count(tag)}}</div>
-                    </div>
-                  </div>
-                </div>
-                {% endif %}
-                {% endfor %}
-              </div>
-
-              {% endif %}
-
-            </ul>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#user-modal-{{user.id}}">
+              View More Info
+            </button>
           </td>
 
         </tr>
+
         {% endfor %}
       </tbody>
     </table>
@@ -260,6 +270,9 @@
 
     // CHECKBOX TOGGLE
     function checkBox(e) {
+      // do nothing and exit function if click on button
+      if (e.target.type == 'button') return
+
       const clickedCheckbox = e.target.parentNode.querySelector('.checkbox')
       clickedCheckbox.checked = !clickedCheckbox.checked
     }
