@@ -93,7 +93,7 @@ def index():
 
         else:
             related_keywords = [seedWord]
-
+        
         for user in result.all():
 
             # get user hashtags
@@ -102,25 +102,21 @@ def index():
                 for hashtag in tweet.hashtags:
                     user_hashtags.append(hashtag.hashtag)
 
-            # compare user_hashtags with related_keywords
-            text1 = ' '.join(related_keywords)
-            if len(related_keywords) < 2:
-                text1 = text1 + ' ' + text1
+            # similarity API only works if text has at least 2 arguments
+            if len(user_hashtags) > 1:
+                
+                # compare user_hashtags with related_keywords
+                text1 = ' '.join(related_keywords)
+                text2 = ' '.join(user_hashtags)
+                response = paralleldots.similarity(text1, text2)
+           
+                # save similarity score to DB
+                user.similarity = response["similarity_score"]
+                db.session.commit()
 
-            text2 = ' '.join(user_hashtags)
-            if len(user_hashtags) < 2:
-                text2 = text2 + ' ' + text2
+        users = result.order_by(User.similarity.desc()).paginate(page=page, per_page=5)
 
-            response = paralleldots.similarity(text1, text2)
-
-            # save similarity score to DB
-            user.similarity = response["similarity_score"]
-            db.session.commit()
-
-            users = result.order_by(User.similarity.desc()).paginate(
-                page=page, per_page=5)
-
-            return render_template('home.html', users=users, tweets=tweets)
+        return render_template('home.html', users=users, tweets=tweets)
 
 
     return render_template('home.html', users=users, tweets=tweets)
