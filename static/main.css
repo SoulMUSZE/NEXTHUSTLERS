@@ -126,6 +126,7 @@ tbody tr:hover {
     max-width: 25px;
 }
 
+
 #verified-button {
     display: none;
 }
@@ -208,3 +209,11 @@ tbody tr:hover {
 .progress.bg-white {
     background-color: #ffee93!important;
 }
+
+
+
+.nav-item:hover {
+    background-color: #EFF2F7;
+    border-radius: 10px;
+}
+
