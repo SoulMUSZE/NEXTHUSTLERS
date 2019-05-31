@@ -157,3 +157,54 @@ tbody tr:hover {
     background-color: #fcd4d4!important;
     color: #DF3A3E!important;
 }
+
+
+.bg-image {
+    background-image: url("./images/splash-screen.jpg");
+    z-index: 99!important;
+    background-size: cover!important;
+}
+
+
+.splash-head {
+    max-width: 720px!important;
+    padding-top: 140px!important;
+    margin: auto;
+}
+
+.splash-h1 {
+    color: #DE3A3E!important;
+    text-align: center;
+    font-family: 'Montserrat', sans-serif; 
+    font-weight:bold;
+    text-transform: uppercase;
+    font-size: 4em;
+}
+
+.splash-h2 {
+    color: #DE3A3E!important;
+    font-family: 'Roboto', sans-serif; 
+    font-weight: 200!important;
+    text-align: center;
+    font-size: 2.1em;
+    padding-top: 13px;
+    padding-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.splash-custom-button {
+    background-color: #DE3A3E!important;
+    color: white!important;
+    border-radius: 20px;
+    font-size: 20px;
+}
+
+.splash-custom-button:hover {
+    transition: all 0.2s ease-in-out!important;;
+    background-color: #EFF2F7!important;
+    color: #DF3A3E!important;
+}
+
+.progress.bg-white {
+    background-color: #ffee93!important;
+}

@@ -1,15 +1,26 @@
 {% extends "_layout.html" %}
 
 {% block content%}
-<script>
+<!-- <script>
     $('.carousel').carousel({
         interval: 250
-    })
-</script>
+    }) -->
+<!-- </script> -->
+<body class="bg-image">
 <div class=container>
-    <br />
-
-    <h1
+    
+    <div class="text-center splash-head">
+        <h1 class="splash-h1">Tweetfluencer</h1>
+        <h2 class="splash-h2">Find Real Users And Get Valuable Metrics To Match Your Influencer Marketing Needs</h2>
+        
+        <div>
+        <button onclick='location.href="{{url_for('index')}}"' type="button" class="btn splash-custom-button">
+                Start Here
+        </button>
+        </div>
+    
+    </div>
+    <!-- <h1
         style="font-family: 'Montserrat', sans-serif; font-weight: bold; position: absolute; font-size: 150px; font-weight:700; top: 30%; left: 50%; transform: translate(-50%, -50%)">
         W.T.F</h1>
     <br />
@@ -32,14 +43,14 @@
                     Flourish</span>
             </div>
         </div>
-    </div>
+    </div> -->
     <!-- <p
         style="color: grey;  font-style: italic; font-family: 'Lato', sans-serif; font-size:35px; text-align: justify; position: absolute; top: 43%; left: 50%; transform: translate(-50%, -50%) ">
         Where Tweets Fly
     </p> -->
-    <button type="button" class="btn btn-black btn-lg"
-        style="position: absolute; top: 52%; left: 50%; transform: translate(-50%, -50%) "><a class="text-info"
-            href="{{url_for('index')}}">Enter here</a></button>
+
+
 </div>
+</body>
 
 {% endblock %}
