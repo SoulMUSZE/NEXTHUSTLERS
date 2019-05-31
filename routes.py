@@ -25,6 +25,12 @@ from flask_material import Material
 
 
 @app.route("/", methods=['GET'])
+def intro():
+
+    return render_template('intro.html')
+
+
+@app.route("/home", methods=['GET'])
 def index():
 
     followersDict = {
@@ -42,6 +48,12 @@ def index():
     verified = request.args.get('verified')
     result = User.query
     tweets = Tweet.query
+
+    usernameExist = request.args.get('selectedUsers')
+    if usernameExist:
+        selected_usernames = json.loads(usernameExist)
+    
+    # breakpoint()
 
     # Filter / Verified Accounts
     if verified:
@@ -70,8 +82,9 @@ def index():
                             ).paginate(page=page, per_page=10)
 
     '''
-        HANDLE HASHTAGS
-        '''
+    HANDLE HASHTAGS
+    '''
+    
     if seedWord:
 
         # get related keywords from SEO API
@@ -88,34 +101,37 @@ def index():
 
         else:
             related_keywords = [seedWord]
+        
+        
 
-        for user in result.all():
+        # for user in result.all():
+        selected_users = []
+        for username in selected_usernames:
 
+            user = User.query.filter_by(screen_name = username).first()
+            selected_users.append(user)
             # get user hashtags
             user_hashtags = []
             for tweet in user.tweets:
                 for hashtag in tweet.hashtags:
                     user_hashtags.append(hashtag.hashtag)
 
-            # compare user_hashtags with related_keywords
-            text1 = ' '.join(related_keywords)
-            if len(related_keywords) < 2:
-                text1 = text1 + ' ' + text1
+            # similarity API only works if text has at least 2 arguments
+            if len(user_hashtags) > 1:
+                
+                # compare user_hashtags with related_keywords
+                text1 = ' '.join(related_keywords)
+                text2 = ' '.join(user_hashtags)
+                response = paralleldots.similarity(text1, text2)
+           
+                breakpoint()
+                # save similarity score to DB
+                user.similarity = response["similarity_score"]
+                db.session.commit()
 
-            text2 = ' '.join(user_hashtags)
-            if len(user_hashtags) < 2:
-                text2 = text2 + ' ' + text2
+        users = result.filter(User.screen_name.in_(selected_usernames)).order_by(User.similarity.desc()).paginate(page=page, per_page=5)
 
-            response = paralleldots.similarity(text1, text2)
-
-            # save similarity score to DB
-            user.similarity = response["similarity_score"]
-            db.session.commit()
-
-            users = result.order_by(User.similarity.desc()).paginate(
-                page=page, per_page=5)
-
-            return render_template('home.html', users=users, tweets=tweets)
+        return render_template('home.html', users=users, tweets=tweets)
 
 
     return render_template('home.html', users=users, tweets=tweets)
@@ -221,3 +237,8 @@ def keywords():
 @app.route("/about", methods=['GET', 'POST'])
 def about():
     return render_template('about.html')
+
+
+@app.route("/feedback", methods=['GET', 'POST'])
+def feedback():
+    return render_template('feedback.html')

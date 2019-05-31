@@ -9,14 +9,15 @@
     
     
     <div id="filter-form" class="d-flex justify-content-center mt-3">
-      <form class="form-inline" method="get">
-        
+      <form class="form-inline" method="GET">
+        <input id='selected-users-input' type="hidden" name="selectedUsers" value="" />
+
         <div class="form-check">
           <label for="verified-button" class="verified-button" for="exampleCheck1"><img class="verified-badge unchecked" src="{{ url_for('static', filename='images/verified-badge.png') }}"></label>
           <input id="verified-button" name="verified" type="checkbox" class="form-check-input" id="exampleCheck1">
           
         </div>
-        
+
         &NonBreakingSpace;
         &NonBreakingSpace;
         &NonBreakingSpace;
@@ -103,16 +104,17 @@
         <!-- Modal -->
         <div class="modal fade" id="user-modal-{{user.id}}" tabindex="-1" role="dialog"
           aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+          <div class="modal-dialog modal-lg modal-dialog-centered" style="max-width:90vw; " role="document">
             <div class="modal-content" style="max-height: 90vh; overflow-y: scroll;">
               <div class="modal-header">
                 <!-- <h5 class="modal-title"> -->
                 <!-- <div class="row"> -->
-                <div class="col-3">
-                  <h4>Hashtags</h4>
+                <div class="col-3 ml-5">
+                  <h4 class="header custom-header special-header text-left" style="font-size:30px;"><u>Hashtags</u></h4>
                 </div>
-                <div class="col-8">
-                  <h4 class="text-center">Frequency</h4><br />
+                <div class="col-6 ml-2">
+                  <h4 class="header custom-header special-header text-center" style="font-size:30px;"><u>Tweets</u></h4>
+                  <br />
                 </div>
                 <!-- </div> -->
                 <!-- </h5> -->
@@ -122,6 +124,7 @@
               </div>
               
               <ul class="pr-3 pl-3 pb-3">
+
                 {% set tags = [] %}
                   {% for tweet in user.tweets %}
                     {% for hashtag in tweet.hashtags %}
@@ -135,33 +138,51 @@
                   {% if frequency.append(tags.count(tag)) %}{% endif %}
                 {% endfor %}
 
+                {% set finaltweets = [] %}
+                {% for text in user.tweets %}
+                {% if finaltweets.append(text.tweet_text) %}{% endif %}
+                {% endfor %}
+
+
+
                 <!-- {{frequency}}
                         {{ frequency | max }} -->
 
-                {% if tags %}
+
+
 
                 <div class="container">
 
-                  {% for tag in tags %}
 
                   <div class="row">
-                    <div class="col-5">
+
+                    <div class="col-6">
+                      {% if tags %}
+                      {% for tag in tags %}
                       <a class="user-info custom-user-info text-info" target="blank"
                         href="https://twitter.com/hashtag/{{tag}}" for="keyword">#{{tag}}</a>
-                    </div>
-                    <div class="col-7">
+
                       <div class="progress custom-progress">
                         <div class="progress-bar bg-info" role="progressbar"
                           style="width: {{ tags.count(tag)/13 * 100 }}%" aria-valuemin="0" aria-valuemax="100">
                           {{tags.count(tag)}}</div>
                       </div>
+                      {% endfor %}
+                      {% endif %}
                     </div>
+
+
+
+                    <div class="col-6">
+                      {% for finaltweet in finaltweets %}
+                      <div class="user-info custom-user-info">{{finaltweet}}</div><br />
+                      {% endfor %}
+                    </div>
+
                   </div>
 
-                  {% endfor %}
                 </div>
 
-                {% endif %}
 
               </ul>
             </div>
@@ -169,17 +190,17 @@
         </div>
         <!-- end modal -->
 
-
-
-
-      <!-- TABLE DATA STARTS HERE -->
-        <tr class="text-left text-dark" onclick=checkBox(event)>
+        
+        
+        
+        <!-- TABLE DATA STARTS HERE -->
+        <!-- <tr class="text-left text-dark" onclick=checkBox(event)> -->
+          <tr class=" text-center text-dark" onclick=checkBox(event)>
 
           <td class="row-align-middle">
             <div id="{{ user.id }}">
               <label><input onclick=checkBox(event) class="checkbox" type="checkbox"
                   value="{{ user.screen_name,user.full_name,user.followers_count,user.friends_count,user.profile_created_at,user.protected }}"></label>
-
             </div>
           </td>
 
@@ -315,30 +336,31 @@
       document.body.removeChild();
     };
 
+    const selectedUsers = []
     // GET VALUE FROM SELECTED CHECKBOXES
     function getValue() {
-      const selectedUsers = []
-      const checkbox_array = document.getElementsByClassName('checkbox');
+      // const checkbox_array = document.getElementsByClassName('checkbox');
 
-      for (i = 0; i < checkbox_array.length; i++) {
-        if (checkbox_array[i].checked === true) {
-          let val = checkbox_array[i].value
-          val = val.replace(/[()' ]/g, "").split(",")
+      // for (i = 0; i < checkbox_array.length; i++) {
+      //   if (checkbox_array[i].checked === true) {
+      //     let val = checkbox_array[i].value
+      //     val = val.replace(/[()' ]/g, "").split(",")
 
-          selectedUsers.push({
-            username: val[0],
-            full_name: val[1],
-            followers_count: val[2],
-            friends_count: val[3],
-            profile_created_at: val[4].replace('datetime.datetime', ""),
-            //protected: val[5]
+      //     selectedUsers.push({
+      //       username: val[0],
+      //       full_name: val[1],
+      //       followers_count: val[2],
+      //       friends_count: val[3],
+      //       profile_created_at: val[4].replace('datetime.datetime', ""),
+      //       //protected: val[5]
 
-          })
-        }
-      }
+      //     })
+      //   }
+      // }
       const csvData = objectToCsv(selectedUsers);
       download(csvData);
     };
+
 
     // CHECKBOX TOGGLE
     function checkBox(e) {
@@ -346,7 +368,22 @@
       if (e.target.type == 'button') return
 
       const clickedCheckbox = e.target.parentNode.querySelector('.checkbox')
+      
+      // Toggle HTML tick
       clickedCheckbox.checked = !clickedCheckbox.checked
+
+      // Get checkbox value
+      const val = clickedCheckbox.value.replace(/[()' ]/g, "").split(",")
+      selectedUsers.push({
+        username: val[0],
+        full_name: val[1],
+        followers_count: val[2],
+        friends_count: val[3],
+        profile_created_at: val[4].replace('datetime.datetime', ""),
+        //protected: val[5]
+      })
+
+      $("#selected-users-input").val(JSON.stringify(selectedUsers.map(u => u.username)))
     }
 
     // VERIFIED BADGE FILTER OPACITY
@@ -369,7 +406,8 @@
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
-  <script type="text/javascript">
+  <script>
+    // LOADER LOGIC
     function loading() {
       $("#spinner").show();
       $("#form-argument").hide();
