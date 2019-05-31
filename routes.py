@@ -128,6 +128,7 @@ def index():
                 text2 = ' '.join(user_hashtags)
                 response = paralleldots.similarity(text1, text2)
            
+                breakpoint()
                 # save similarity score to DB
                 user.similarity = response["similarity_score"]
                 db.session.commit()
