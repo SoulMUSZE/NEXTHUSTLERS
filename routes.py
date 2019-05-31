@@ -37,8 +37,13 @@ def index():
 
     city = request.args.get('city')
     followers = request.args.get('followers')
+    verified = request.args.get('verified')
     result = User.query
     tweets = Tweet.query
+
+    # Filter / Verified Accounts
+    if verified:
+        result = result.filter (User.verified)
 
     # Filter / City
     if city:
