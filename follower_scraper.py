@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     # obtain id's of user's followers. API call will return 5000 ids
 
-    f_ids = api.followers_ids(screen_name='KatyPerry')
+    f_ids = api.followers_ids(screen_name='garyvee')
     # print(f_ids[:50]) #order of ids returned by API call has minor variations
     # print(len(f_ids)) #5000
     user_count = 0
@@ -92,7 +92,7 @@ if __name__ == '__main__':
             
             
             # check if follower has minimum followers count
-            if follower.followers_count > 100:
+            if follower.followers_count > 350:
                 legit_followers.append(follower)
 
                       
@@ -110,7 +110,11 @@ if __name__ == '__main__':
                                 friends_count=follower.friends_count,
                                 profile_created_at = follower.created_at,
                                 protected=follower.protected,
-                                profile_image_url=follower.profile_image_url)
+                                profile_image_url=follower.profile_image_url,
+                                description=follower.description, url=follower.url,
+                                verified=follower.verified
+                                )
+                                
                     
                     db.session.add(save_user)
                     

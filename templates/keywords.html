@@ -14,14 +14,18 @@
             <label for="seedWord">Enter Word:</label>
             <input name="seedWord" type="text" class="form-control" , autocomplete="on">
         </div>
-        <button id='keyword-button' type="submit" class="btn btn-info">Submit</button>
+        <button id='keyword-button' type="submit" class="btn btn-info" onclick="loading();">Submit</button>
     </form>
 
     <p></p>
+    
+    <!-- SPINNER -->
+    <div id="loading"></div>
 
     {% if keywords %}
 
-    <div class="container">
+
+    <div id="keyword-result" class="container">
         <div class="row">
             <div class="col-3">
                 <h4>Related Keyword</h4>
@@ -52,4 +56,13 @@
     {% endif %}
 
 </div>
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script type="text/javascript">
+    function loading() {
+      $("#loading").show();
+      $("#keyword-result").hide();
+    }
+  </script>
 {% endblock %}

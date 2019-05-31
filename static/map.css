@@ -23,7 +23,7 @@
     left: auto;
 }
 
-.pac-container .pac-icon {
+.pac-icon {
     width: 0;
     background-image: none;
     display: none;
