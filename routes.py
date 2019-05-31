@@ -21,8 +21,6 @@ from keyword_api_client import RestClient, get_related_keywords
 
 paralleldots.set_api_key(PARALLELDOTS_API_KEY)
 
-from flask_material import Material
-
 
 @app.route("/", methods=['GET'])
 def intro():

@@ -146,3 +146,14 @@ tbody tr:hover {
     border: none!important;
     background-color: #f3f3f3!important;
 }
+
+.custom-button {
+    background-color: #DE3A3E!important;
+    color: white!important;
+}
+
+.custom-button:hover {
+    transition: all 0.2s ease-in-out!important;;
+    background-color: #fcd4d4!important;
+    color: #DF3A3E!important;
+}

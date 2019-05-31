@@ -14,7 +14,7 @@
             <label for="seedWord">Enter Word:</label>
             <input name="seedWord" type="text" class="form-control" , autocomplete="on">
         </div>
-        <button id='keyword-button' type="submit" class="btn btn-info" onclick="loading();">Submit</button>
+        <button type="submit" class="btn btn-info custom-button" onclick="loading();">Submit</button>
     </form>
 
     <p></p>
@@ -43,7 +43,7 @@
             </div>
             <div class="col-9">
                 <div class="progress bg-white" style="height: 2rem;">
-                    <div class="progress-bar bg-info" role="progressbar"
+                    <div class="progress-bar bg-danger" role="progressbar"
                         style="width: {{keyword['search_volume']/max*100}}%;font-size:20px;font-family: 'Lato', sans-serif;"
                         aria-valuemin="0" aria-valuemax="100">
                         {{"{:,}".format(keyword['search_volume'])}}</div>
