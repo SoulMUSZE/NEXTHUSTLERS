@@ -26,6 +26,12 @@ from keyword_api_client import RestClient
 
 
 @app.route("/", methods=['GET'])
+def intro():
+
+    return render_template('intro.html')
+
+
+@app.route("/home", methods=['GET'])
 def index():
 
     followersDict = {
@@ -210,3 +216,8 @@ def keywords():
 @app.route("/about", methods=['GET', 'POST'])
 def about():
     return render_template('about.html')
+
+
+@app.route("/feedback", methods=['GET', 'POST'])
+def feedback():
+    return render_template('feedback.html')

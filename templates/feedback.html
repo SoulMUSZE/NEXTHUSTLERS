@@ -1,0 +1,51 @@
+{% extends "_layout.html" %}
+
+{% block content%}
+<div class=container>
+
+    <h1 class="text-center" style="font-family: 'Montserrat', sans-serif; font-weight: bold">FEEDBACKS</h1><br />
+
+    <div class="row mt-5">
+
+        <div class="card col-sm m-3" style="width: 18rem;">
+            <img class="card-img-top rounded-circle" src="{{ url_for('static', filename='images/stars.png') }}"
+                type="image/png" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">ALI</h5>
+                <h6 class="card-subtitle mb-2 text-muted">"BEST TWITTER MARKETING WEB APP EVER!"</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's
+                    content.</p>
+
+            </div>
+        </div>
+
+        <div class="card col-sm m-3" style="width: 18rem;">
+            <img class="card-img-top rounded-circle" src="{{ url_for('static', filename='images/stars.png') }}"
+                type="image/png" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">AH CHONG</h5>
+                <h6 class="card-subtitle mb-2 text-muted">"BEST TWITTER MARKETING WEB APP EVER!"</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's
+                    content.</p>
+
+            </div>
+        </div>
+
+        <div class="card col-sm m-3" style="width: 18rem;">
+            <img class="card-img-top rounded-circle" src="{{ url_for('static', filename='images/stars.png') }}"
+                type="image/png" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">MUTHU</h5>
+                <h6 class="card-subtitle mb-2 text-muted">"BEST TWITTER MARKETING WEB APP EVER!"</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's
+                    content.</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
