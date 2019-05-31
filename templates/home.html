@@ -166,7 +166,6 @@
             <div id="{{ user.id }}">
               <label><input onclick=checkBox(event) class="checkbox" type="checkbox"
                   value="{{ user.screen_name,user.full_name,user.followers_count,user.friends_count,user.profile_created_at,user.protected }}"></label>
-
             </div>
           </td>
 
@@ -327,19 +326,20 @@
       $("#selected-users-input").val(JSON.stringify(selectedUsers.map(u => u.username)))
     }
 
+
+  </script>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+  <script>
     // LOADER LOGIC
     function loading() {
       $("#loading").show();
       $("#form-argument").hide();
       $(".table").hide();
       $("#footer").hide();
-
     }
-
   </script>
-
-  <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
-
 
 
   {% endblock %}
