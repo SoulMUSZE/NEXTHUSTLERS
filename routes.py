@@ -83,8 +83,7 @@ def index():
 
     page = request.args.get('page', 1, type=int)
 
-    users = result.order_by(User.followers_count.desc()
-                            ).paginate(page=page, per_page=5)
+    users = result.order_by(User.followers_count.desc()).paginate(page=page, per_page=5)
 
     '''
     HANDLE HASHTAGS
